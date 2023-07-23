@@ -5,6 +5,8 @@ import (
   "crypto/rand"
   "crypto/subtle"
   "log"
+  "errors"
+  bolt "go.etcd.io/bbolt"
 )
 
 const (
@@ -16,32 +18,50 @@ const (
 )
 
 type User struct {
-  id int64
   Name string
   hash []byte
   salt []byte
 }
 
-func CreateUser(name string, password string) (User, error) {
-  salt := make([]byte, SALT_SIZE)
-  _, err := rand.Read(salt)
+func (d Data) CreateUser(name string, password string) (User, error) {
+  err := d.db.Update(func (tx *bolt.Tx) error {
+    //Check if user present
+
+    salt := make([]byte, SALT_SIZE)
+    _, err := rand.Read(salt)
+    if err != nil {
+      log.Printf("Failed to generate salt: %v", err)
+      return err
+    }
+    hash := hashPassword(password, salt)
+    user := User{
+      Name: name,
+      hash: hash,
+      salt: salt,
+    }
+    return user, nil
+  })
   if err != nil {
-    log.Printf("Failed to generate salt: %v", err)
-    return User{}, err
+    return User{}, nil
   }
-  hash := hashPassword(password, salt)
-  user := User{
-    id:  0, //TODO: implement
-    Name: name,
-    hash: hash,
-    salt: salt,
-  }
-  return user, nil
 }
 
 func (u User) CheckPassword(password string) bool {
   enteredHash := hashPassword(password, u.salt)
   return subtle.ConstantTimeCompare(enteredHash, u.hash) == 1
+}
+
+func (d Data) GetUser(name string) (User, error) {
+  user := User{}
+  err := d.db.View(func (tx *bolt.Tx) error {
+    bucket := tx.Bucket([]byte(BUCKETNAME))
+    if bucket == nil {
+      return errors.New("Bucket not present")
+    }
+    
+    return nil
+  })
+  return user, err
 }
 
 func hashPassword(password string, salt []byte) []byte {
