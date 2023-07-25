@@ -15,6 +15,8 @@ const (
   MEMORY = 512 * 1024 // 512MB
   CPU_COUNT = 4 
   HASH_LENGTH = 128
+
+  BUCKETNAME = "user"
 )
 
 type User struct {
@@ -24,26 +26,35 @@ type User struct {
 }
 
 func (d Data) CreateUser(name string, password string) (User, error) {
+  user := User{}
   err := d.db.Update(func (tx *bolt.Tx) error {
     //Check if user present
+    bucket,err := tx.CreateBucketIfNotExists([]byte(BUCKETNAME));
+    if err != nil {
+      return err
+    }
+    userPresent := bucket.Get([]byte(name)) != nil
+
+    if userPresent {
+      return errors.New("User already present")
+    }
 
     salt := make([]byte, SALT_SIZE)
-    _, err := rand.Read(salt)
+    _, err = rand.Read(salt)
     if err != nil {
       log.Printf("Failed to generate salt: %v", err)
       return err
     }
     hash := hashPassword(password, salt)
-    user := User{
+    user = User{
       Name: name,
       hash: hash,
       salt: salt,
     }
-    return user, nil
+    //TODO: save to database
+    return nil
   })
-  if err != nil {
-    return User{}, nil
-  }
+  return user, err
 }
 
 func (u User) CheckPassword(password string) bool {
