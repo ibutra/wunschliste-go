@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"fmt"
 
 	"github.com/ibutra/wunschliste-go/data"
 )
@@ -61,4 +62,6 @@ func main() {
 		log.Panic("Failed to reserve wish: ", err)
 	}
 	log.Printf("%v\n", wishs)
+
+	fmt.Printf("%v\n", d.String())
 }
