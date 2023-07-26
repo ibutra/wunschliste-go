@@ -4,26 +4,28 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	bolt "go.etcd.io/bbolt"
 )
 
 var wishBucketName []byte = []byte("wish")
 
+var WishBucketMissing = errors.New("Wish bucket doesn't exist")
+var UserWishBucketMissing = errors.New("User's wish bucket doesn't exist")
+
 type Wish struct {
-	Name string
-	Price float64
-	Link string
-	User string
+	Name     string
+	Price    float64
+	Link     string
+	User     string
 	Reserved string
-	id uint64
-	data *Data
+	id       uint64
+	data     *Data
 }
 
 func (u *User) CreateWish(name string, price float64, link string) (*Wish, error) {
 	var wish *Wish = nil
-	err := u.data.db.Update(func (tx *bolt.Tx) error {
+	err := u.data.db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists(wishBucketName)
 		if err != nil {
 			return err
@@ -37,12 +39,12 @@ func (u *User) CreateWish(name string, price float64, link string) (*Wish, error
 			return err
 		}
 		wish = &Wish{
-			Name: name,
+			Name:  name,
 			Price: price,
-			Link: link,
-			User: u.Name,
-			data: u.data,
-			id: id,
+			Link:  link,
+			User:  u.Name,
+			data:  u.data,
+			id:    id,
 		}
 		payload, err := json.Marshal(wish)
 		if err != nil {
@@ -56,7 +58,7 @@ func (u *User) CreateWish(name string, price float64, link string) (*Wish, error
 
 func (u *User) GetWishs() ([]*Wish, error) {
 	wishs := make([]*Wish, 0)
-	err := u.data.db.View(func (tx *bolt.Tx) error {
+	err := u.data.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(wishBucketName)
 		if bucket == nil {
 			return nil
@@ -65,7 +67,7 @@ func (u *User) GetWishs() ([]*Wish, error) {
 		if bucket == nil {
 			return nil
 		}
-		bucket.ForEach(func (k []byte, v []byte) error {
+		bucket.ForEach(func(k []byte, v []byte) error {
 			var wish Wish
 			json.Unmarshal(v, &wish)
 			wish.data = u.data
@@ -84,15 +86,37 @@ func (u *User) GetWishs() ([]*Wish, error) {
 	return wishs, err
 }
 
-func (w *Wish) Delete() error {
+func (w *Wish) Reserve(who *User) error {
 	err := w.data.db.Update(func (tx *bolt.Tx) error {
-		bucket := tx.Bucket(wishBucketName)
+	  bucket := tx.Bucket(wishBucketName)
 		if bucket == nil {
-			return errors.New("Wish bucket doesn't exist")
+			return WishBucketMissing
 		}
 		bucket = bucket.Bucket([]byte(w.User))
 		if bucket == nil {
-			return errors.New("User wish bucket doesn't exist")
+			return UserWishBucketMissing
+		}
+		oldReserved := w.Reserved
+		w.Reserved = who.Name
+		payload, err := json.Marshal(w)
+		if err != nil {
+			w.Reserved = oldReserved
+			return err
+		}
+		return bucket.Put(convertUInt64ToByteArray(w.id), payload)
+	})
+	return err
+}
+
+func (w *Wish) Delete() error {
+	err := w.data.db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(wishBucketName)
+		if bucket == nil {
+			return WishBucketMissing
+		}
+		bucket = bucket.Bucket([]byte(w.User))
+		if bucket == nil {
+			return UserWishBucketMissing
 		}
 		return bucket.Delete(convertUInt64ToByteArray(w.id))
 	})

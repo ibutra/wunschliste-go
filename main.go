@@ -14,7 +14,7 @@ func main() {
 	}
 	defer d.Close()
 
-	_, err = d.CreateUser("Stefan", "abcde")
+	_, err = d.CreateUser("Lukas", "blub")
 	if err != nil {
 		log.Print("Failed to create User: ", err)
 	} else {
@@ -26,6 +26,11 @@ func main() {
 		log.Panic("Failed to get User: ", err)
 	}
 	log.Printf("%v\n", user)
+	if user.CheckPassword("abcde") {
+		log.Printf("Password check OK")
+	} else {
+		log.Printf("Password check failed")
+	}
 
 	wish, err := user.CreateWish("XxXxX", 123.98, "blub")
 	if err != nil {
@@ -48,6 +53,12 @@ func main() {
 	wishs, err = user.GetWishs()
 	if err != nil {
 		log.Panic("Failed to get wishs: ", err)
+	}
+	log.Printf("%v\n", wishs)
+
+	err = wishs[0].Reserve(user)
+	if err != nil {
+		log.Panic("Failed to reserve wish: ", err)
 	}
 	log.Printf("%v\n", wishs)
 }
