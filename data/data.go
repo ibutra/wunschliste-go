@@ -2,6 +2,7 @@ package data
 
 import (
 	bolt "go.etcd.io/bbolt"
+	"strconv"
 )
 
 const (
@@ -25,4 +26,12 @@ func OpenData() (Data, error) {
 
 func (d *Data) Close() {
 	d.db.Close()
+}
+
+func convertUInt64ToByteArray(i uint64) []byte {
+	return []byte(strconv.FormatUint(i, 10))
+}
+
+func convertByteArrayToUint64(b []byte) (uint64, error) {
+	return strconv.ParseUint(string(b), 10, 64)
 }

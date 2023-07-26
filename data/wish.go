@@ -48,7 +48,7 @@ func (u *User) CreateWish(name string, price float64, link string) (*Wish, error
 		if err != nil {
 			return err
 		}
-		bucket.Put([]byte(strconv.FormatUint(id, 10)), payload)
+		bucket.Put(convertUInt64ToByteArray(id), payload)
 		return nil
 	})
 	return wish, err
@@ -69,7 +69,7 @@ func (u *User) GetWishs() ([]*Wish, error) {
 			var wish Wish
 			json.Unmarshal(v, &wish)
 			wish.data = u.data
-			id, err := strconv.ParseUint(string(k), 10, 64)
+			id, err := convertByteArrayToUint64(k)
 			if err != nil {
 				return err
 			}
@@ -94,7 +94,7 @@ func (w *Wish) Delete() error {
 		if bucket == nil {
 			return errors.New("User wish bucket doesn't exist")
 		}
-		return bucket.Delete([]byte(strconv.FormatUint(w.id, 10)))
+		return bucket.Delete(convertUInt64ToByteArray(w.id))
 	})
 	return err
 }
