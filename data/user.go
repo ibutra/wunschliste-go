@@ -26,10 +26,10 @@ type User struct {
 	Name string
 	Hash []byte
 	Salt []byte
-	data Data
+	data *Data
 }
 
-func (d Data) CreateUser(name string, password string) (*User, error) {
+func (d *Data) CreateUser(name string, password string) (*User, error) {
 	user, err := d.GetUser(name)
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (u *User) String() string {
 	return fmt.Sprintf("User: %v", u.Name)
 }
 
-func (d Data) GetUser(name string) (*User, error) {
+func (d *Data) GetUser(name string) (*User, error) {
 	var user *User = nil
 	err := d.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(userBucketName))
