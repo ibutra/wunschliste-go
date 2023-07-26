@@ -27,7 +27,7 @@ func main() {
 	}
 	log.Printf("%v\n", user)
 
-	wish, err := user.CreateWish("Brot", 0.12, "Bäcker")
+	wish, err := user.CreateWish("XxXxX", 123.98, "blub")
 	if err != nil {
 		log.Panic("Failed to create wish: ", err)
 	}
@@ -35,6 +35,17 @@ func main() {
 	log.Printf("%v\n", wish)
 
 	wishs, err := user.GetWishs()
+	if err != nil {
+		log.Panic("Failed to get wishs: ", err)
+	}
+	log.Printf("%v\n", wishs)
+
+	err = wish.Delete()
+	if err != nil {
+		log.Panic("Failed to delete wish: ", err)
+	}
+
+	wishs, err = user.GetWishs()
 	if err != nil {
 		log.Panic("Failed to get wishs: ", err)
 	}
