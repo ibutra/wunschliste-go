@@ -1,28 +1,31 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/ibutra/wunschliste-go/data"
 )
 
 func main() {
-  fmt.Println("Hello Worldy")
   d, err := data.OpenData()
 
   if err != nil {
-    log.Panic("Failed to open Database")
-    return
+    log.Panic("Failed to open Database: ", err)
   }
   defer d.Close()
 
-  user, err := d.CreateUser("Stefan", "abcde")
+  _, err = d.CreateUser("Stefan", "abcde")
   if err != nil {
-    log.Panic("Failed to create User")
-    return
+    log.Print("Failed to create User: ", err)
+  } else {
+    log.Print("Created user")
   }
 
-  fmt.Print(user)
+  user, err := d.GetUser("Stefan")
+  if err != nil {
+    log.Panic("Failed to get User: ", err)
+  }
+  log.Printf("%v\n", user)
+
 
 }
