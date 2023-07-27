@@ -33,7 +33,14 @@ func main() {
 		log.Printf("Password check failed")
 	}
 
-	wish, err := user.CreateWish("XxXxX", 123.98, "blub")
+	wish, err := user.CreateWish("Brot", 123.98, "blub")
+	if err != nil {
+		log.Panic("Failed to create wish: ", err)
+	}
+
+	log.Printf("%v\n", wish)
+
+	wish, err = user.CreateWish("XxXxX", 123.98, "blub")
 	if err != nil {
 		log.Panic("Failed to create wish: ", err)
 	}

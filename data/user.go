@@ -22,6 +22,7 @@ const (
 
 var userBucketName []byte = []byte("user")
 
+//Values must not be changed! Only public for saving to database
 type User struct {
 	Name string
 	Hash []byte
@@ -50,14 +51,14 @@ func (d *Data) CreateUser(name string, password string) (*User, error) {
 		Salt: salt,
 		data: d,
 	}
-	err = user.Save()
+	err = user.save()
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (u *User) Save() error {
+func (u *User) save() error {
 	err := u.data.db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists(userBucketName)
 		if err != nil {
@@ -70,6 +71,19 @@ func (u *User) Save() error {
 		return bucket.Put([]byte(u.Name), json)
 	})
 	return err
+}
+
+func (u *User) ChangePassword(password string) error {
+  salt := make([]byte, SALT_SIZE)
+  _, err := rand.Read(salt)
+  if err != nil {
+    log.Printf("Failed to generate salt: %v", err)
+    return err
+  }
+  hash := hashPassword(password, salt)
+  u.Salt = salt
+  u.Hash = hash
+  return u.save()
 }
 
 func (u *User) CheckPassword(password string) bool {
