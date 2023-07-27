@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"fmt"
+	"net/http"
 
 	"github.com/ibutra/wunschliste-go/data"
 )
@@ -15,60 +15,15 @@ func main() {
 	}
 	defer d.Close()
 
-	_, err = d.CreateUser("Lukas", "blub")
+	mux := http.NewServeMux()
+	
+	mux.HandleFunc("/", index)
+	err = http.ListenAndServe(":8080", mux)
 	if err != nil {
-		log.Print("Failed to create User: ", err)
-	} else {
-		log.Print("Created user")
+		log.Fatal(err)
 	}
+}
 
-	user, err := d.GetUser("Stefan")
-	if err != nil {
-		log.Panic("Failed to get User: ", err)
-	}
-	log.Printf("%v\n", user)
-	if user.CheckPassword("abcde") {
-		log.Printf("Password check OK")
-	} else {
-		log.Printf("Password check failed")
-	}
-
-	wish, err := user.CreateWish("Brot", 123.98, "blub")
-	if err != nil {
-		log.Panic("Failed to create wish: ", err)
-	}
-
-	log.Printf("%v\n", wish)
-
-	wish, err = user.CreateWish("XxXxX", 123.98, "blub")
-	if err != nil {
-		log.Panic("Failed to create wish: ", err)
-	}
-
-	log.Printf("%v\n", wish)
-
-	wishs, err := user.GetWishs()
-	if err != nil {
-		log.Panic("Failed to get wishs: ", err)
-	}
-	log.Printf("%v\n", wishs)
-
-	err = wish.Delete()
-	if err != nil {
-		log.Panic("Failed to delete wish: ", err)
-	}
-
-	wishs, err = user.GetWishs()
-	if err != nil {
-		log.Panic("Failed to get wishs: ", err)
-	}
-	log.Printf("%v\n", wishs)
-
-	err = wishs[0].Reserve(user)
-	if err != nil {
-		log.Panic("Failed to reserve wish: ", err)
-	}
-	log.Printf("%v\n", wishs)
-
-	fmt.Printf("%v\n", d.String())
+func index(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hi"))
 }
