@@ -20,7 +20,7 @@ func Serve() error {
 
 	mux := http.NewServeMux()
 	
-	mux.HandleFunc("/", loginHandler)
+	mux.HandleFunc("/login", loginHandler)
 	err = http.ListenAndServe(":8080", mux)
 	return err
 }

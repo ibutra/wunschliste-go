@@ -1,10 +1,11 @@
 {{define `login`}}
 {{template `head`}}
 <h1>Login</h1>
-<form>
+<form action="/login" method="POST">
   <label for="name">Name:</label><br>
-  <input type="text" id="name"><br>
+  <input type="text" name="name"><br>
   <label for="password">Password:</label><br>
-  <input type="password" id="password"><br>
+  <input type="password" name="password"><br>
+  <input type="submit" value="Login">
 {{template `foot`}}
 {{end}}
