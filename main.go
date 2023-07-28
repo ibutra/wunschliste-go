@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"github.com/ibutra/wunschliste-go/data"
+	"github.com/ibutra/wunschliste-go/serve"
 )
 
 func main() {
@@ -15,15 +15,9 @@ func main() {
 	}
 	defer d.Close()
 
-	mux := http.NewServeMux()
-	
-	mux.HandleFunc("/", index)
-	err = http.ListenAndServe(":8080", mux)
+	err = serve.Serve()
 	if err != nil {
-		log.Fatal(err)
+		log.Panic("Failed to serve: ", err)
 	}
-}
 
-func index(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hi"))
 }
