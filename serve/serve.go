@@ -6,13 +6,13 @@ import (
 	"net/http"
 )
 
-//go:embed *.html
+//go:embed templates/*.html
 var templatesFS embed.FS
 
 var templates *template.Template
 
 func Serve() error {
-	t, err := template.ParseFS(templatesFS, "*.html")
+	t, err := template.ParseFS(templatesFS, "templates/*.html")
 	if err != nil {
 		return err
 	}
