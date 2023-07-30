@@ -28,5 +28,4 @@ func logoutHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	log.Print("User logged out: ", session.User)
 }

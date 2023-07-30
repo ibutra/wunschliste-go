@@ -45,7 +45,6 @@ func loginHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
 		renderLoginTemplate(s, w, "Error loggin in")
 		return
 	}
-	log.Print("User logged in: ", user.Name)
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
