@@ -9,7 +9,7 @@ import (
 	"github.com/ibutra/wunschliste-go/data"
 )
 
-var sessionTimeout time.Duration = 1 * 60 * 1000 * 1000 * 1000 //30 Minutes
+var sessionTimeout time.Duration = 30 * 60 * 1000 * 1000 * 1000 //30 Minutes
 var cookieName = "wunschliste-session"
 
 func loginHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
