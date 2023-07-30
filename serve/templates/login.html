@@ -1,14 +1,29 @@
 {{define `login`}}
 {{template `head` true}}
-<h1>Login</h1>
+<h1 class="title">Login</h1>
 {{with .Message}}
-<div class="message">{{.}}</div>
+<div class="notification is-danger is-light">{{.}}</div>
 {{end}}
-<form action="/login" method="POST">
-  <label for="name">Name:</label><br>
-  <input type="text" name="name" value="Stefan"><br>
-  <label for="password">Password:</label><br>
-  <input type="password" name="password" value="blub"><br>
-  <input type="submit" class="button is-primary" value="Login">
+<div class="box">
+  <form action="/login" method="POST">
+    <div class="field">
+      <label class="label" for="name">Name:</label>
+      <div class="control">
+        <input class="input" type="text" name="name" value="Stefan" placeholder="Name">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label" for="password">Password:</label>
+      <div class="control">
+        <input class="input" type="password" name="password" value="blub"><br>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <input type="submit" class="button is-primary" value="Login">
+      </div>
+    </div>
+  </form>
+</div>
 {{template `foot`}}
 {{end}}
