@@ -23,8 +23,8 @@ type Wish struct {
 	data     *Data
 }
 
-func (u *User) CreateWish(name string, price float64, link string) (*Wish, error) {
-	var wish *Wish = nil
+func (u *User) CreateWish(name string, price float64, link string) (Wish, error) {
+	var wish Wish
 	err := u.data.db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists(wishBucketName)
 		if err != nil {
@@ -38,7 +38,7 @@ func (u *User) CreateWish(name string, price float64, link string) (*Wish, error
 		if err != nil {
 			return err
 		}
-		wish = &Wish{
+		wish = Wish{
 			Name:  name,
 			Price: price,
 			Link:  link,
@@ -56,8 +56,8 @@ func (u *User) CreateWish(name string, price float64, link string) (*Wish, error
 	return wish, err
 }
 
-func (u *User) GetWishs() ([]*Wish, error) {
-	wishs := make([]*Wish, 0)
+func (u *User) GetWishs() ([]Wish, error) {
+	wishs := make([]Wish, 0)
 	err := u.data.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(wishBucketName)
 		if bucket == nil {
@@ -77,7 +77,7 @@ func (u *User) GetWishs() ([]*Wish, error) {
 			}
 			wish.id = id
 
-			wishs = append(wishs, &wish)
+			wishs = append(wishs, wish)
 			return nil
 		})
 

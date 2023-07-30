@@ -1,11 +1,14 @@
 {{define `login`}}
 {{template `head`}}
 <h1>Login</h1>
+{{with .Message}}
+<div class="message">{{.}}</div>
+{{end}}
 <form action="/login" method="POST">
   <label for="name">Name:</label><br>
-  <input type="text" name="name"><br>
+  <input type="text" name="name" value="Stefan"><br>
   <label for="password">Password:</label><br>
-  <input type="password" name="password"><br>
+  <input type="password" name="password" value="blub"><br>
   <input type="submit" value="Login">
 {{template `foot`}}
 {{end}}

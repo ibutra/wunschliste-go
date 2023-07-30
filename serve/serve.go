@@ -33,8 +33,12 @@ func NewServe(data *data.Data) (*Serve, error) {
 		mux: mux,
 	}
 
-
+	//*******************
+	// HANDLERS
+	//*******************
+	serve.addHandler("/", indexHandler)
 	serve.addHandler("/login", loginHandler)
+
 	return serve, nil
 }
 

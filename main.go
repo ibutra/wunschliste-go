@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"fmt"
 
 	"github.com/ibutra/wunschliste-go/data"
 	"github.com/ibutra/wunschliste-go/serve"
@@ -14,6 +15,8 @@ func main() {
 		log.Panic("Failed to open Database: ", err)
 	}
 	defer d.Close()
+
+	fmt.Print(d.String())
 
 	serve, err := serve.NewServe(&d)
 	if err != nil {
