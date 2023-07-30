@@ -10,6 +10,9 @@ import (
 //go:embed templates/*.html
 var templatesFS embed.FS
 
+//go:embed static/*
+var staticFS embed.FS
+
 type Serve struct {
 	templates *template.Template
 	data *data.Data
@@ -39,6 +42,8 @@ func NewServe(data *data.Data) (*Serve, error) {
 	serve.addHandler("/", indexHandler)
 	serve.addHandler("/login", loginHandler)
 	serve.addHandler("/logout", logoutHandler)
+	
+	mux.Handle("/static/", http.FileServer(http.FS(staticFS)))
 
 	return serve, nil
 }
