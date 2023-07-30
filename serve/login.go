@@ -1,22 +1,26 @@
 package serve
 
 import (
-	"fmt"
 	"net/http"
 )
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func loginHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		templates.ExecuteTemplate(w, "login", nil)
+		s.templates.ExecuteTemplate(w, "login", nil)
 		return
 	}
 	name := r.PostFormValue("name")
 	password := r.PostFormValue("password")
 
-	if name == "" || password == "" {
-		templates.ExecuteTemplate(w, "login", nil)
-		return
+	if name != "" && password != "" {
+		user, err := s.data.GetUser(name)
+		if err == nil {
+			if user.CheckPassword(password) {
+				//Create session
+				w.Write([]byte("Login successful"))
+				return
+			}
+		}
 	}
-
-	w.Write([]byte(fmt.Sprintf("Name: %v PW: %v", name, password)))
+		s.templates.ExecuteTemplate(w, "login", nil)
 }

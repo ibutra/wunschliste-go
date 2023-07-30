@@ -22,6 +22,8 @@ const (
 
 var userBucketName []byte = []byte("user")
 
+var UserNotExistingError = errors.New("User does not exist")
+
 //Values must not be changed! Only public for saving to database
 type User struct {
 	Name string
@@ -32,7 +34,7 @@ type User struct {
 
 func (d *Data) CreateUser(name string, password string) (*User, error) {
 	user, err := d.GetUser(name)
-	if err != nil {
+	if err != nil && err != UserNotExistingError {
 		return nil, err
 	}
 	if user != nil {
@@ -100,11 +102,11 @@ func (d *Data) GetUser(name string) (*User, error) {
 	err := d.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(userBucketName))
 		if bucket == nil {
-			return nil
+			return UserNotExistingError
 		}
 		jsonData := bucket.Get([]byte(name))
 		if jsonData == nil {
-			return nil
+			return UserNotExistingError
 		}
 		user = &User{
 			data: d,

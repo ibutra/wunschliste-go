@@ -15,9 +15,11 @@ func main() {
 	}
 	defer d.Close()
 
-	err = serve.Serve()
+	serve, err := serve.NewServe(&d)
 	if err != nil {
 		log.Panic("Failed to serve: ", err)
 	}
+
+	err = serve.Serve()
 
 }
