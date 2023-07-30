@@ -9,7 +9,7 @@ import (
 )
 
 const (
-    SESSION_SECRET_SIZE = 20
+    SESSION_SECRET_SIZE = 30
 )
 
 var sessionBucketName []byte = []byte("session")

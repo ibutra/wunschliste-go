@@ -16,6 +16,8 @@ func main() {
 	}
 	defer d.Close()
 
+	// d.CreateUser("Stefan", "blub")
+
 	fmt.Print(d.String())
 
 	serve, err := serve.NewServe(&d)
