@@ -26,5 +26,7 @@ func logoutHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
 	err = session.Delete()
 	if err != nil {
 		log.Print(err)
+		return
 	}
+	log.Print("User logged out: ", session.User)
 }
