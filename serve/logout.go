@@ -18,7 +18,12 @@ func logoutHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	err = s.data.DeleteSession(secret)
+	session, err := s.data.GetSessionFromSecret(secret)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	err = session.Delete()
 	if err != nil {
 		log.Print(err)
 	}

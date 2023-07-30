@@ -16,7 +16,9 @@ func main() {
 	}
 	defer d.Close()
 
-	// d.CreateUser("Stefan", "blub")
+	if _, err := d.GetUser("Stefan"); err == data.UserNotExistingError {
+		d.CreateUser("Stefan", "blub")
+	}
 
 	fmt.Print(d.String())
 

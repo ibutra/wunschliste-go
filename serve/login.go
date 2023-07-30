@@ -59,13 +59,17 @@ func renderLoginTemplate(s *Serve, w http.ResponseWriter, message string) {
 
 func login(user data.User, w http.ResponseWriter) error {
 	//Create session
-	secret, err := user.CreateSession(sessionTimeout)
+	session, err := user.CreateSession(sessionTimeout)
 	if err != nil {
 		return err
 	}
 	cookie := http.Cookie {
 		Name: sessionCookieName,
-		Value: base64.StdEncoding.EncodeToString(secret),
+		Value: base64.StdEncoding.EncodeToString(session.Secret),
+		Expires: session.ValidUntil,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Secure: true,
 	}
 	http.SetCookie(w, &cookie)
 	return nil
@@ -82,11 +86,16 @@ func (s *Serve) getLoggedInUser(r *http.Request) (bool, data.User) {
 		log.Print(err)
 		return false, data.User{}
 	}
-	user, err := s.data.GetUserFromSession(secret)
+	session, err := s.data.GetSessionFromSecret(secret)
 	if err != nil {
 		if err != data.NoActiveSessionError {
 			log.Print(err)
 		}
+		return false, data.User{}
+	}
+	user, err := s.data.GetUser(session.User)
+	if err != nil {
+		log.Print(err)
 		return false, data.User{}
 	}
 	return true, user
