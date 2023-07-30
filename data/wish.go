@@ -17,7 +17,7 @@ type Wish struct {
 	Name     string
 	Price    float64
 	Link     string
-	User     string
+	User     *User
 	Reserved string
 	id       uint64
 	data     *Data
@@ -42,7 +42,7 @@ func (u *User) CreateWish(name string, price float64, link string) (*Wish, error
 			Name:  name,
 			Price: price,
 			Link:  link,
-			User:  u.Name,
+			User:  u,
 			data:  u.data,
 			id:    id,
 		}
@@ -92,7 +92,7 @@ func (w *Wish) Reserve(who *User) error {
 		if bucket == nil {
 			return WishBucketMissing
 		}
-		bucket = bucket.Bucket([]byte(w.User))
+		bucket = bucket.Bucket([]byte(w.User.Name))
 		if bucket == nil {
 			return UserWishBucketMissing
 		}
@@ -114,7 +114,7 @@ func (w *Wish) Delete() error {
 		if bucket == nil {
 			return WishBucketMissing
 		}
-		bucket = bucket.Bucket([]byte(w.User))
+		bucket = bucket.Bucket([]byte(w.User.Name))
 		if bucket == nil {
 			return UserWishBucketMissing
 		}
