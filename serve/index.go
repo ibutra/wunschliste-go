@@ -10,5 +10,5 @@ func indexHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
 	if !loggedIn {
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("Welcome %v", user.Name)))
+	serve.templates.ExecuteTemplate(w, "index", fmt.Sprintf("Hallo %v! Willkommen bei Wunschliste", user.Name))
 }

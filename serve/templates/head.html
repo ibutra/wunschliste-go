@@ -3,5 +3,10 @@
   <head>
     <title>Wunschliste</title>
   </head>
-  </body>
+  <body>
+    {{if not .}}
+    <div class="top-bar">
+      <a href="/logout">Logout</a>
+    </div>
+    {{end}}
 {{end}}

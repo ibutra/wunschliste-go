@@ -10,7 +10,7 @@ import (
 )
 
 var sessionTimeout time.Duration = 30 * 60 * 1000 * 1000 * 1000 //30 Minutes
-var cookieName = "wunschliste-session"
+var sessionCookieName = "wunschliste-session"
 
 func loginHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
 	if loggedIn, _ := s.getLoggedInUser(r); loggedIn {
@@ -64,7 +64,7 @@ func login(user data.User, w http.ResponseWriter) error {
 		return err
 	}
 	cookie := http.Cookie {
-		Name: cookieName,
+		Name: sessionCookieName,
 		Value: base64.StdEncoding.EncodeToString(secret),
 	}
 	http.SetCookie(w, &cookie)
@@ -72,7 +72,7 @@ func login(user data.User, w http.ResponseWriter) error {
 }
 
 func (s *Serve) getLoggedInUser(r *http.Request) (bool, data.User) {
-	cookie, err := r.Cookie(cookieName)
+	cookie, err := r.Cookie(sessionCookieName)
 	if err != nil {
 		log.Print(err)
 		return false, data.User{}

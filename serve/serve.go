@@ -38,6 +38,7 @@ func NewServe(data *data.Data) (*Serve, error) {
 	//*******************
 	serve.addHandler("/", indexHandler)
 	serve.addHandler("/login", loginHandler)
+	serve.addHandler("/logout", logoutHandler)
 
 	return serve, nil
 }
