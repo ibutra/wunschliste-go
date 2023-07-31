@@ -77,7 +77,9 @@ func login(user data.User, w http.ResponseWriter) error {
 func (s *Serve) getLoggedInUser(r *http.Request) (bool, data.User) {
 	cookie, err := r.Cookie(sessionCookieName)
 	if err != nil {
-		log.Print(err)
+		if err != http.ErrNoCookie {
+			log.Print(err)
+		}
 		return false, data.User{}
 	}
 	secret, err := base64.StdEncoding.DecodeString(cookie.Value)
