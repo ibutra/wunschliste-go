@@ -1,0 +1,14 @@
+{{define `wishlist`}}
+<table class="table">
+  <thead>
+    <th>Wunsch</th>
+    <th>URL</th>
+    <th>Preis</th>
+  </thead>
+  {{range .}}
+    <tr>{{.Name}}</tr>
+    <tr>{{.Link}}</tr>
+    <tr>{{printf "%.2f" .Price}}€</tr>
+  {{end}}
+</table>
+{{end}}
