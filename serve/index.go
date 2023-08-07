@@ -2,7 +2,7 @@ package serve
 
 import (
 	"net/http"
-	"fmt"
+	"log"
 )
 
 func indexHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
@@ -10,5 +10,9 @@ func indexHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
 	if !loggedIn {
 		return
 	}
-	serve.templates.ExecuteTemplate(w, "index", fmt.Sprintf("Hallo %v! Willkommen bei Wunschliste", user.Name))
+	wishs, err := user.GetWishs()
+	if err != nil {
+		log.Println("Failed to get wishs: ", err)
+	}
+	serve.templates.ExecuteTemplate(w, "index", wishs)
 }

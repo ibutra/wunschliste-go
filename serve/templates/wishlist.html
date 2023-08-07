@@ -6,9 +6,11 @@
     <th>Preis</th>
   </thead>
   {{range .}}
-    <tr>{{.Name}}</tr>
-    <tr>{{.Link}}</tr>
-    <tr>{{printf "%.2f" .Price}}€</tr>
+  <tr>
+    <td>{{.Name}}</td>
+    <td><a href={{.Link}}>{{.Link}}</a></td>
+    <td>{{printf "%.2f" .Price}}€</td>
+  </tr>
   {{end}}
 </table>
 {{end}}
