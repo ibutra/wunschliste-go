@@ -1,20 +1,25 @@
 {{define `wishlist`}}
-<table class="table">
-  <thead>
-    <th>Wunsch</th>
-    <th>URL</th>
-    <th>Preis</th>
-  </thead>
-  {{range .}}
-  <tr>
-    <td>{{.Name}}</td>
-    <td><a href={{.Link}}>{{.Link}}</a></td>
-    <td>{{printf "%.2f" .Price}}€</td>
-  </tr>
-  {{else}}
-  <tr>
-    <td colspan="3">Empty</td>
-  </tr>
-  {{end}}
-</table>
+<section class="section">
+  <div class="containger">
+    <a class="button is-primary" href="newWish">Neuer Wunsch</a>
+  </div>
+  <table class="table">
+    <thead>
+      <th>Wunsch</th>
+      <th>URL</th>
+      <th>Preis</th>
+    </thead>
+    {{range .}}
+    <tr>
+      <td>{{.Name}}</td>
+      <td><a href={{.Link}}>{{.Link}}</a></td>
+      <td>{{printf "%.2f" .Price}}€</td>
+    </tr>
+    {{else}}
+    <tr>
+      <td colspan="3">Empty</td>
+    </tr>
+    {{end}}
+  </table>
+</section>
 {{end}}

@@ -1,0 +1,40 @@
+{{define `newWish`}}
+{{template `head`}}
+<section class="section">
+  {{with .Message}}
+  <div class="notification is-danger is-light">{{.}}</div>
+  {{end}}
+  <form action="/newWish" method="POST">
+    <div class="field">
+      <label class="label" for="name">Beschreibung:</label>
+      <div class="control">
+        <input class="input" type="text" name="name" placeholder="Beschreibung" value="{{.Name}}">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label" for="link">Link:</label>
+      <div class="control">
+        <input class="input" type="url" name="link" placeholder="Link" value="{{.Link}}">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label" for="price">Preis:</label>
+      <div class="control">
+        <input class="input" type="number" name="price" step="0.01" value=
+        {{with .PriceText}}
+        "{{.}}"
+        {{else}}
+        "0"
+        {{end}}
+        >€
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <input type="submit" class="button is-primary" value="Speichern">
+      </div>
+    </div>
+  </form>
+</section>
+{{template `foot`}}
+{{end}}

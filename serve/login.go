@@ -14,7 +14,7 @@ var sessionCookieName = "wunschliste-session"
 
 func loginHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
 	if loggedIn, _ := s.getLoggedInUser(r); loggedIn {
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 	if r.Method != http.MethodPost {
@@ -45,7 +45,7 @@ func loginHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
 		renderLoginTemplate(s, w, "Error loggin in")
 		return
 	}
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
 
 func renderLoginTemplate(s *Serve, w http.ResponseWriter, message string) {
@@ -105,7 +105,7 @@ func (s *Serve) getLoggedInUser(r *http.Request) (bool, data.User) {
 func (s *Serve) getLoggedInUserOrRedirect(w http.ResponseWriter, r *http.Request) (bool, data.User) {
 	loggedIn, user := s.getLoggedInUser(r)
 	if !loggedIn {
-		http.Redirect(w, r, "/login", http.StatusFound)
+		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
 	}
 	return loggedIn, user
 }

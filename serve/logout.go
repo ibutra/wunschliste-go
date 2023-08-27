@@ -7,7 +7,7 @@ import (
 )
 
 func logoutHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/login", http.StatusFound)
+	http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
 	cookie, err := r.Cookie(sessionCookieName)
 	if err != nil {
 		log.Print(err)

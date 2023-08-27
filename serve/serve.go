@@ -42,6 +42,7 @@ func NewServe(data *data.Data) (*Serve, error) {
 	serve.addHandler("/", indexHandler)
 	serve.addHandler("/login", loginHandler)
 	serve.addHandler("/logout", logoutHandler)
+	serve.addHandler("/newWish", newWishHandler)
 	
 	mux.Handle("/static/", http.FileServer(http.FS(staticFS)))
 
