@@ -17,8 +17,9 @@ type Wish struct {
 	Name     string
 	Price    float64
 	Link     string
-	User     string
-	Reserved string
+	User     string //owning user
+	Reserved string //Userid who reserved
+	Count		 int64 //How many are wished?
 	id       uint64
 	data     *Data
 }
@@ -43,6 +44,7 @@ func (u *User) CreateWish(name string, price float64, link string) (Wish, error)
 			Price: price,
 			Link:  link,
 			User:  u.Name,
+			Count: 1,
 			data:  u.data,
 			id:    id,
 		}
@@ -69,13 +71,19 @@ func (u *User) GetWishs() ([]Wish, error) {
 		}
 		bucket.ForEach(func(k []byte, v []byte) error {
 			var wish Wish
-			json.Unmarshal(v, &wish)
-			wish.data = u.data
+			err := json.Unmarshal(v, &wish)
+			if err != nil {
+				return err
+			}
 			id, err := convertByteArrayToUint64(k)
 			if err != nil {
 				return err
 			}
 			wish.id = id
+			wish.data = u.data
+			if wish.Count == 0 {
+				wish.Count = 1;
+			}
 
 			wishs = append(wishs, wish)
 			return nil

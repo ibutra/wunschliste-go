@@ -11,6 +11,10 @@
     <td><a href={{.Link}}>{{.Link}}</a></td>
     <td>{{printf "%.2f" .Price}}€</td>
   </tr>
+  {{else}}
+  <tr>
+    <td colspan="3">Empty</td>
+  </tr>
   {{end}}
 </table>
 {{end}}
