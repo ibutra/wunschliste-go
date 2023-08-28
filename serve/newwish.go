@@ -8,52 +8,62 @@ import (
 	"github.com/ibutra/wunschliste-go/data"
 )
 
+type templateData struct {
+	Message string;
+	Name string;
+	Link string;
+	PriceText string;
+	NameRed bool;
+	LinkRed bool;
+}
 
 func newWishHandler(serve *Serve, user data.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		renderNewWishTemplate(serve, w, "", "", "", "", false, false)
+		td := templateData {"", "", "", "", false, false}
+		renderNewWishTemplate(serve, w, td)
 		return
 	}
 	name := r.PostFormValue("name")
 	link := r.PostFormValue("link")
 	priceText := r.PostFormValue("price")
 	if name == "" {
-		renderNewWishTemplate(serve, w, "Die Beschreibung darf nicht leer sein", name, link, priceText, true, false)
+		td := templateData{
+			Message: "Die Beschreibung darf nicht leer sein",
+			Name: name,
+			Link: link,
+			PriceText: priceText,
+			NameRed: true,
+			LinkRed: false,
+		}
+		renderNewWishTemplate(serve, w, td)
 		return
 	}
 	price, err := strconv.ParseFloat(priceText, 64)
 	if err != nil {
 		log.Println(err)
-		renderNewWishTemplate(serve, w, "Ungültiger Preis", name, link, priceText, false, true)
+		td := templateData{
+			Message: "Ungültiger Preis. Bitte nur Zahlen eingeben",
+			Name: name,
+			Link: link,
+			PriceText: priceText,
+			NameRed: false,
+			LinkRed: true,
+		}
+		renderNewWishTemplate(serve, w, td)
 		return
 	}
 	_, err = user.CreateWish(name, price, link)
 	if err != nil {
 		log.Println(err)
-		renderNewWishTemplate(serve, w, "Fehler beim Speichern des Wunsches. Administrator informiert", name, link, priceText, false, false)
+		renderNewWishTemplate(serve, w, templateData{"Fehler beim Speichern des Wunsches. Administrator informiert", name, link, priceText, false, false})
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
 
-func renderNewWishTemplate(serve *Serve, w http.ResponseWriter, message string, name string, link string, priceText string, nameInputRed bool, priceInputRed bool) {
-	if message != "" {
-		templateData := struct {
-			Message string;
-			Name string;
-			Link string;
-			PriceText string;
-			NameRed bool;
-			LinkRed bool;
-		}{
-			message,
-			name,
-			link,
-			priceText,
-			nameInputRed,
-			priceInputRed,
-		}
-		if err := serve.templates.ExecuteTemplate(w, "newWish", templateData); err != nil {
+func renderNewWishTemplate(serve *Serve, w http.ResponseWriter, td templateData) {
+	if td.Message != "" {
+		if err := serve.templates.ExecuteTemplate(w, "newWish", td); err != nil {
 			log.Println(err)
 		}
 	} else {
