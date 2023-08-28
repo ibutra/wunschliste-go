@@ -40,11 +40,9 @@ func NewServe(data *data.Data) (*Serve, error) {
 	//*******************
 	// HANDLERS
 	//*******************
-	serve.addLoggedInHandler("/", indexHandler)
-	serve.addHandler("/login", loginHandler)
-	serve.addHandler("/logout", logoutHandler)
-	serve.addLoggedInHandler("/newWish", newWishHandler)
-	
+	mux.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+		serve.ServeRoute(w, r)
+	})
 	mux.Handle("/static/", http.FileServer(http.FS(staticFS)))
 
 	return serve, nil

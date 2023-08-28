@@ -12,7 +12,7 @@ import (
 var sessionTimeout time.Duration = 100 * 365 * 24 * 60 * 60 * 1000 * 1000 * 1000 //100 years
 var sessionCookieName = "wunschliste-session"
 
-func loginHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
+func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
 	if loggedIn, _ := s.getLoggedInUser(r); loggedIn {
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return

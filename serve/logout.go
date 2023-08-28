@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func logoutHandler(s *Serve, w http.ResponseWriter, r *http.Request) {
+func (s *Serve) logoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
 	cookie, err := r.Cookie(sessionCookieName)
 	if err != nil {

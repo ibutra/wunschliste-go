@@ -17,7 +17,7 @@ type templateData struct {
 	LinkRed bool;
 }
 
-func newWishHandler(serve *Serve, user data.User, w http.ResponseWriter, r *http.Request) {
+func (serve *Serve) newWishHandler(user data.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		td := templateData {"", "", "", "", false, false}
 		renderNewWishTemplate(serve, w, td)

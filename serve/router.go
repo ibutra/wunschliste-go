@@ -7,6 +7,12 @@ import (
 	"log"
 )
 
+var METHOD_ALL = []string{"GET", "POST", "PUT", "DELETE"}
+var METHOD_GET = []string{"GET"}
+var METHOD_POST = []string{"POST"}
+var METHOD_PUT = []string{"PUT"}
+var METHOD_DELETE = []string{"DELETE"}
+
 /*
  * Router requirements:
  * 1. Handle basic, text only routes. E.g.: /index
@@ -15,12 +21,38 @@ import (
  * 4. More specific routes should have precedence
  */
 
-func ServeRoute(w http.ResponseWriter, r *http.Request) {
-
+func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
+	//Not logged in urls
+	if match("/login", METHOD_ALL, r){
+		s.loginHandler(w, r)
+		return
+	}
+	//Ensure we are logged in for the following urls
+	loggedIn, user := s.getLoggedInUserOrRedirect(w, r)
+	if !loggedIn {
+		return
+	}
+	log.Println(r.URL.Path)
+	switch {
+	case match("/logout", METHOD_ALL, r):
+		s.logoutHandler(w, r)
+	case match("/", METHOD_ALL, r):
+		s.indexHandler(user, w, r)
+	case match("/newWish", []string{"GET", "POST"}, r):
+		s.newWishHandler(user, w, r)
+	default:
+		s.notFoundHandler(w, r)
+	}
 }
 
-func match(expectedPattern string, expectedMethod string, r *http.Request, vars ...any) bool {
-	if expectedMethod != r.Method {
+func match(expectedPattern string, expectedMethods []string, r *http.Request, vars ...any) bool {
+	methodOk := false
+	for _, method := range(expectedMethods) {
+		if method == r.Method {
+			methodOk = true
+		}
+	}
+	if !methodOk {
 		return false
 	}
 	path := r.URL.Path

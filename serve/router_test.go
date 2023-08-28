@@ -13,13 +13,13 @@ func TestMatch(t *testing.T) {
 		t.Fatal()
 	}
 
-	if !match("/", "GET", r) {
+	if !match("/", []string{"GET"}, r) {
 		t.Fail()
 	}
-	if match("/index", "GET", r) {
+	if match("/index", []string{"GET"}, r) {
 		t.Fail()
 	}
-	if match("/", "POST", r) {
+	if match("/", []string{"POST"}, r) {
 		t.Fail()
 	}
 	
@@ -27,16 +27,16 @@ func TestMatch(t *testing.T) {
 	if err != nil {
 		t.Fatal()
 	}
-	if !match("/index", "POST", r) {
+	if !match("/index", []string{"POST"}, r) {
 		t.Fail()
 	}
-	if match("/index", "PUT", r) {
+	if match("/index", []string{"PUT"}, r) {
 		t.Fail()
 	}
-	if match("/index", "POST", r, &id) {
+	if match("/index", []string{"POST"}, r, &id) {
 		t.Fail()
 	}
-	if match("/index", "POST", r, &txt) {
+	if match("/index", []string{"POST"}, r, &txt) {
 		t.Fail()
 	}
 
@@ -44,13 +44,13 @@ func TestMatch(t *testing.T) {
 	if err != nil {
 		t.Fatal()
 	}
-	if !match("/book/:id", "GET", r, &id) {
+	if !match("/book/:id", []string{"GET"}, r, &id) {
 		t.Fail()
 	}
 	if id != 12 {
 		t.Fail()
 	}
-	if !match("/book/:id", "GET", r, &txt) {
+	if !match("/book/:id", []string{"GET"}, r, &txt) {
 		t.Fail()
 	}
 	if txt != "12" {
@@ -61,13 +61,13 @@ func TestMatch(t *testing.T) {
 	if err != nil {
 		t.Fatal()
 	}
-	if !match("/book/:string", "GET", r, &txt) {
+	if !match("/book/:string", []string{"GET"}, r, &txt) {
 		t.Fail()
 	}
 	if txt != "identifier42" {
 		t.Fail()
 	}
-	if match("/book/:id", "GET", r, &id) {
+	if match("/book/:id", []string{"GET"}, r, &id) {
 		t.Fail()
 	}
 }
