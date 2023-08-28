@@ -17,7 +17,7 @@ type templateData struct {
 	LinkRed bool;
 }
 
-func (serve *Serve) newWishPostHandler(user data.User, w http.ResponseWriter, r *http.Request) {
+func (serve *Serve) editWishPostHandler(user data.User, w http.ResponseWriter, r *http.Request) {
 	name := r.PostFormValue("name")
 	link := r.PostFormValue("link")
 	priceText := r.PostFormValue("price")
@@ -30,7 +30,7 @@ func (serve *Serve) newWishPostHandler(user data.User, w http.ResponseWriter, r 
 			NameRed: true,
 			LinkRed: false,
 		}
-		renderNewWishTemplate(serve, w, td)
+		renderEditWishTemplate(serve, w, td)
 		return
 	}
 	price, err := strconv.ParseFloat(priceText, 64)
@@ -44,19 +44,19 @@ func (serve *Serve) newWishPostHandler(user data.User, w http.ResponseWriter, r 
 			NameRed: false,
 			LinkRed: true,
 		}
-		renderNewWishTemplate(serve, w, td)
+		renderEditWishTemplate(serve, w, td)
 		return
 	}
 	_, err = user.CreateWish(name, price, link)
 	if err != nil {
 		log.Println(err)
-		renderNewWishTemplate(serve, w, templateData{"Fehler beim Speichern des Wunsches. Administrator informiert", name, link, priceText, false, false})
+		renderEditWishTemplate(serve, w, templateData{"Fehler beim Speichern des Wunsches. Administrator informiert", name, link, priceText, false, false})
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
 
-func renderNewWishTemplate(serve *Serve, w http.ResponseWriter, td templateData) {
+func renderEditWishTemplate(serve *Serve, w http.ResponseWriter, td templateData) {
 	if td.Message != "" {
 		if err := serve.templates.ExecuteTemplate(w, "newWish", td); err != nil {
 			log.Println(err)

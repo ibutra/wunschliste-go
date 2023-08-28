@@ -33,6 +33,7 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println(r.URL.Path)
+	var id int
 	switch {
 	case match("/logout", METHOD_ALL, r):
 		s.logoutHandler(w, r)
@@ -40,9 +41,11 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		s.indexHandler(user, w, r)
 	case match("/newWish", METHOD_GET, r):
 		td := templateData {"", "", "", "", false, false}
-		renderNewWishTemplate(s, w, td)
+		renderEditWishTemplate(s, w, td)
 	case match("/newWish", METHOD_POST, r):
-		s.newWishPostHandler(user, w, r)
+		s.editWishPostHandler(user, w, r)
+	case match("/wish/:id", METHOD_GET, r, &id):
+		w.Write([]byte(strconv.Itoa(id)))
 	default:
 		s.notFoundHandler(w, r)
 	}
