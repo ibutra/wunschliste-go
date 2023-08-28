@@ -1,9 +1,17 @@
 package serve
 
 import (
-	"net/http"
 	"log"
+	"net/http"
+
+	"github.com/ibutra/wunschliste-go/data"
 )
+
+type templateInfo struct {
+	Wishs []data.Wish
+	CanEdit bool
+	CanReserve bool
+}
 
 func indexHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
 	loggedIn, user := serve.getLoggedInUserOrRedirect(w, r)
@@ -14,5 +22,12 @@ func indexHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Failed to get wishs: ", err)
 	}
-	serve.templates.ExecuteTemplate(w, "index", wishs)
+	ti := templateInfo {
+		Wishs: wishs,
+		CanEdit: true,
+		CanReserve: false,
+	}
+	if err := serve.templates.ExecuteTemplate(w, "index", ti); err != nil {
+		log.Println(err)
+	}
 }

@@ -1,4 +1,6 @@
 {{define `wishlist`}}
+{{$canEdit := .CanEdit}}
+{{$canReserve := .CanReserve}}
 <section class="section">
   <div class="containger">
     <a class="button is-primary" href="newWish">Neuer Wunsch</a>
@@ -8,16 +10,30 @@
       <th>Wunsch</th>
       <th>URL</th>
       <th>Preis</th>
+      {{if $canEdit}}
+        <th>Bearbeiten</th>
+        <th>Löschen</th>
+      {{end}}
+      {{if $canReserve}}
+        <th>Reservieren</th>
+      {{end}}
     </thead>
-    {{range .}}
+    {{range .Wishs}}
     <tr>
       <td>{{.Name}}</td>
       <td><a href={{.Link}}>{{.Link}}</a></td>
       <td>{{printf "%.2f" .Price}}€</td>
+      {{if $canEdit}}
+        <td><a class="button is-warning">Bearbeiten</a></td>
+        <td><a class="button is-danger">Löschen</a></td>
+      {{end}}
+      {{if $canReserve}}
+        <td><a class="button is-primary">Reservieren</a></td>
+      {{end}}
     </tr>
     {{else}}
     <tr>
-      <td colspan="3">Empty</td>
+      <td colspan="0">Empty</td>
     </tr>
     {{end}}
   </table>
