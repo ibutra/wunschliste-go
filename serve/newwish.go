@@ -8,10 +8,6 @@ import (
 
 
 func newWishHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
-	loggedIn, user := serve.getLoggedInUserOrRedirect(w, r)
-	if !loggedIn {
-		return
-	}
 	if r.Method != http.MethodPost {
 		renderNewWishTemplate(serve, w, "", "", "", "", false, false)
 		return
@@ -29,6 +25,7 @@ func newWishHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
 		renderNewWishTemplate(serve, w, "Ungültiger Preis", name, link, priceText, false, true)
 		return
 	}
+	_, user := serve.getLoggedInUser(r)
 	_, err = user.CreateWish(name, price, link)
 	if err != nil {
 		log.Println(err)

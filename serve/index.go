@@ -14,10 +14,7 @@ type templateInfo struct {
 }
 
 func indexHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
-	loggedIn, user := serve.getLoggedInUserOrRedirect(w, r)
-	if !loggedIn {
-		return
-	}
+  _, user := serve.getLoggedInUser(r)
 	wishs, err := user.GetWishs()
 	if err != nil {
 		log.Println("Failed to get wishs: ", err)

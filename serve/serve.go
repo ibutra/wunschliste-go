@@ -39,10 +39,10 @@ func NewServe(data *data.Data) (*Serve, error) {
 	//*******************
 	// HANDLERS
 	//*******************
-	serve.addHandler("/", indexHandler)
+	serve.addLoggedInHandler("/", indexHandler)
 	serve.addHandler("/login", loginHandler)
 	serve.addHandler("/logout", logoutHandler)
-	serve.addHandler("/newWish", newWishHandler)
+	serve.addLoggedInHandler("/newWish", newWishHandler)
 	
 	mux.Handle("/static/", http.FileServer(http.FS(staticFS)))
 
@@ -55,6 +55,16 @@ func (s *Serve) Serve() error {
 
 func (s *Serve) addHandler(pattern string, handler serveHandler) {
 	s.mux.HandleFunc(pattern, func (w http.ResponseWriter, r *http.Request) {
+		handler(s, w, r)
+	})
+}
+
+func (s *Serve) addLoggedInHandler(pattern string, handler serveHandler) {
+	s.mux.HandleFunc(pattern, func (w http.ResponseWriter, r *http.Request) {
+		loggedIn, _ := s.getLoggedInUserOrRedirect(w, r)
+		if !loggedIn {
+			return
+		}
 		handler(s, w, r)
 	})
 }
