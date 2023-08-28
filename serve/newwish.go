@@ -17,12 +17,7 @@ type templateData struct {
 	LinkRed bool;
 }
 
-func (serve *Serve) newWishHandler(user data.User, w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		td := templateData {"", "", "", "", false, false}
-		renderNewWishTemplate(serve, w, td)
-		return
-	}
+func (serve *Serve) newWishPostHandler(user data.User, w http.ResponseWriter, r *http.Request) {
 	name := r.PostFormValue("name")
 	link := r.PostFormValue("link")
 	priceText := r.PostFormValue("price")

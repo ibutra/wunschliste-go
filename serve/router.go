@@ -38,8 +38,11 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		s.logoutHandler(w, r)
 	case match("/", METHOD_ALL, r):
 		s.indexHandler(user, w, r)
-	case match("/newWish", []string{"GET", "POST"}, r):
-		s.newWishHandler(user, w, r)
+	case match("/newWish", METHOD_GET, r):
+		td := templateData {"", "", "", "", false, false}
+		renderNewWishTemplate(s, w, td)
+	case match("/newWish", METHOD_POST, r):
+		s.newWishPostHandler(user, w, r)
 	default:
 		s.notFoundHandler(w, r)
 	}
