@@ -7,10 +7,10 @@ import (
 	"log"
 )
 
-var METHOD_ALL = []string{"GET", "POST", "PUT", "DELETE"}
-var METHOD_GET = []string{"GET"}
-var METHOD_POST = []string{"POST"}
-var METHOD_PUT = []string{"PUT"}
+var METHOD_ALL    = []string{"GET", "POST", "PUT", "DELETE"}
+var METHOD_GET    = []string{"GET"}
+var METHOD_POST   = []string{"POST"}
+var METHOD_PUT    = []string{"PUT"}
 var METHOD_DELETE = []string{"DELETE"}
 
 /*
@@ -33,19 +33,16 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println(r.URL.Path)
-	var id int
 	switch {
 	case match("/logout", METHOD_ALL, r):
 		s.logoutHandler(w, r)
 	case match("/", METHOD_ALL, r):
 		s.indexHandler(user, w, r)
-	case match("/newWish", METHOD_GET, r):
+	case match("/wish", METHOD_GET, r):
 		td := templateData {"", "", "", "", false, false}
 		renderEditWishTemplate(s, w, td)
-	case match("/newWish", METHOD_POST, r):
+	case match("/wish", METHOD_POST, r):
 		s.editWishPostHandler(user, w, r)
-	case match("/wish/:id", METHOD_GET, r, &id):
-		w.Write([]byte(strconv.Itoa(id)))
 	default:
 		s.notFoundHandler(w, r)
 	}

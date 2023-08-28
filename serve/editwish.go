@@ -58,11 +58,11 @@ func (serve *Serve) editWishPostHandler(user data.User, w http.ResponseWriter, r
 
 func renderEditWishTemplate(serve *Serve, w http.ResponseWriter, td templateData) {
 	if td.Message != "" {
-		if err := serve.templates.ExecuteTemplate(w, "newWish", td); err != nil {
+		if err := serve.templates.ExecuteTemplate(w, "editWish", td); err != nil {
 			log.Println(err)
 		}
 	} else {
-		if err := serve.templates.ExecuteTemplate(w, "newWish", nil); err != nil {
+		if err := serve.templates.ExecuteTemplate(w, "editWish", nil); err != nil {
 			log.Println(err)
 		}
 	}
