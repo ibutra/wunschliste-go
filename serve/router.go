@@ -2,8 +2,9 @@ package serve
 
 import (
 	"net/http"
-
-	"github.com/ibutra/wunschliste-go/data"
+	"strconv"
+	"strings"
+	"log"
 )
 
 /*
@@ -14,23 +15,50 @@ import (
  * 4. More specific routes should have precedence
  */
 
-type HandleFunc func (*Serve, data.User, http.ResponseWriter, *http.Request, ...interface{})
-
-type Route struct {
-	Method string
-	Pattern string
-	Handler HandleFunc
-}
-
-var routes = []Route{
-	// {"GET", "/newWish", newWishHandler},
-}
-
 func ServeRoute(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func match(path string, method string, route Route) bool {
+func match(expectedPattern string, expectedMethod string, r *http.Request, vars ...any) bool {
+	if expectedMethod != r.Method {
+		return false
+	}
+	path := r.URL.Path
+	pathSlices := strings.Split(path, "/")
+	patternSlices := strings.Split(expectedPattern, "/")
 
-	return false
+	argumentIdx := 0
+
+	for i, patternPart := range(patternSlices) {
+		if len(patternPart) > 0 && patternPart[0] == ':' {
+			//We have a variable to fill
+			if argumentIdx >= len(vars) {
+				log.Print("Not enough arguments provided for URL pattern")
+				return false
+			}
+			switch p := vars[argumentIdx].(type) {
+			case *string:
+				*p = pathSlices[i]
+			case *int:
+				n, err := strconv.Atoi(pathSlices[i])
+				if err != nil {
+					return false
+				}
+				*p = n
+			default:
+				log.Println("vars must be *string or *int")
+				return false
+			}
+			argumentIdx += 1
+		} else {
+			if patternPart != pathSlices[i] {
+				return false
+			}
+		}
+	}
+	if argumentIdx != len(vars) {
+		//Not all arguments were filled
+		return false
+	}
+	return true
 }
