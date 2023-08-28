@@ -20,6 +20,7 @@ type Serve struct {
 }
 
 type serveHandler func (*Serve, http.ResponseWriter, *http.Request)
+type loggedInServeHandler func (*Serve, data.User, http.ResponseWriter, *http.Request)
 
 func NewServe(data *data.Data) (*Serve, error) {
 	t, err := template.ParseFS(templatesFS, "templates/*.html")
@@ -59,12 +60,12 @@ func (s *Serve) addHandler(pattern string, handler serveHandler) {
 	})
 }
 
-func (s *Serve) addLoggedInHandler(pattern string, handler serveHandler) {
+func (s *Serve) addLoggedInHandler(pattern string, handler loggedInServeHandler) {
 	s.mux.HandleFunc(pattern, func (w http.ResponseWriter, r *http.Request) {
-		loggedIn, _ := s.getLoggedInUserOrRedirect(w, r)
+		loggedIn, user := s.getLoggedInUserOrRedirect(w, r)
 		if !loggedIn {
 			return
 		}
-		handler(s, w, r)
+		handler(s, user, w, r)
 	})
 }

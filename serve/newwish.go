@@ -2,12 +2,14 @@ package serve
 
 import (
 	"log"
-	"strconv"
 	"net/http"
+	"strconv"
+
+	"github.com/ibutra/wunschliste-go/data"
 )
 
 
-func newWishHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
+func newWishHandler(serve *Serve, user data.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		renderNewWishTemplate(serve, w, "", "", "", "", false, false)
 		return
@@ -25,7 +27,6 @@ func newWishHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
 		renderNewWishTemplate(serve, w, "Ungültiger Preis", name, link, priceText, false, true)
 		return
 	}
-	_, user := serve.getLoggedInUser(r)
 	_, err = user.CreateWish(name, price, link)
 	if err != nil {
 		log.Println(err)

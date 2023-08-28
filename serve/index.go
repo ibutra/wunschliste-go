@@ -13,8 +13,7 @@ type templateInfo struct {
 	CanReserve bool
 }
 
-func indexHandler(serve *Serve, w http.ResponseWriter, r *http.Request) {
-  _, user := serve.getLoggedInUser(r)
+func indexHandler(serve *Serve, user data.User, w http.ResponseWriter, r *http.Request) {
 	wishs, err := user.GetWishs()
 	if err != nil {
 		log.Println("Failed to get wishs: ", err)
