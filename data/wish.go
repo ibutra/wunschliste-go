@@ -12,6 +12,7 @@ var wishBucketName []byte = []byte("wish")
 
 var WishBucketMissing = errors.New("Wish bucket doesn't exist")
 var UserWishBucketMissing = errors.New("User's wish bucket doesn't exist")
+var WishNotPresent = errors.New("No wish with this id present for given user")
 
 type Wish struct {
 	Name     string
@@ -20,7 +21,7 @@ type Wish struct {
 	User     string //owning user
 	Reserved string //Userid who reserved
 	Count		 int64 //How many are wished?
-	id       uint64
+	Id       uint64 `json:"-"` //Must not be changed!
 	data     *Data
 }
 
@@ -46,7 +47,7 @@ func (u *User) CreateWish(name string, price float64, link string) (Wish, error)
 			User:  u.Name,
 			Count: 1,
 			data:  u.data,
-			id:    id,
+			Id:    id,
 		}
 		payload, err := json.Marshal(wish)
 		if err != nil {
@@ -79,7 +80,7 @@ func (u *User) GetWishs() ([]Wish, error) {
 			if err != nil {
 				return err
 			}
-			wish.id = id
+			wish.Id = id
 			wish.data = u.data
 			if wish.Count == 0 {
 				wish.Count = 1;
@@ -92,6 +93,33 @@ func (u *User) GetWishs() ([]Wish, error) {
 		return nil
 	})
 	return wishs, err
+}
+
+func (u *User) GetWishWithId(id uint64) (Wish, error) {
+	var wish Wish
+	err := u.data.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(wishBucketName)
+		if bucket == nil {
+			return WishNotPresent
+		}
+		bucket = bucket.Bucket([]byte(u.Name))
+		if bucket == nil {
+			return WishNotPresent
+		}
+		key := convertUInt64ToByteArray(id)
+		wishData := bucket.Get(key)
+		if wishData == nil {
+			return WishNotPresent
+		}
+		err := json.Unmarshal(wishData, &wish)
+		if err != nil {
+			return err
+		}
+		wish.data = u.data
+		wish.Id = id
+		return nil
+	})
+	return wish, err
 }
 
 func (w *Wish) Reserve(who *User) error {
@@ -111,7 +139,7 @@ func (w *Wish) Reserve(who *User) error {
 			w.Reserved = oldReserved
 			return err
 		}
-		return bucket.Put(convertUInt64ToByteArray(w.id), payload)
+		return bucket.Put(convertUInt64ToByteArray(w.Id), payload)
 	})
 	return err
 }
@@ -126,11 +154,12 @@ func (w *Wish) Delete() error {
 		if bucket == nil {
 			return UserWishBucketMissing
 		}
-		return bucket.Delete(convertUInt64ToByteArray(w.id))
+		fmt.Println(w)
+		return bucket.Delete(convertUInt64ToByteArray(w.Id))
 	})
 	return err
 }
 
 func (w *Wish) String() string {
-	return fmt.Sprintf("Wish: %v Price: %v Link: %v Owner: %v Reserved: %v id: %v", w.Name, w.Price, w.Link, w.User, w.Reserved, w.id)
+	return fmt.Sprintf("Wish: %v Price: %v Link: %v Owner: %v Reserved: %v id: %v", w.Name, w.Price, w.Link, w.User, w.Reserved, w.Id)
 }

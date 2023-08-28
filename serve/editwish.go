@@ -56,6 +56,22 @@ func (serve *Serve) editWishPostHandler(user data.User, w http.ResponseWriter, r
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
 
+func (s *Serve) deleteWishHandler(user data.User, w http.ResponseWriter, r *http.Request, wishId uint64) {
+	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+
+	wish, err := user.GetWishWithId(wishId);
+	if err != nil {
+		if err != data.WishNotPresent {
+			log.Println(err)
+		}
+		return
+	}
+	if err = wish.Delete(); err != nil {
+		log.Println(err)
+		return
+	}
+}
+
 func renderEditWishTemplate(serve *Serve, w http.ResponseWriter, td templateData) {
 	if td.Message != "" {
 		if err := serve.templates.ExecuteTemplate(w, "editWish", td); err != nil {

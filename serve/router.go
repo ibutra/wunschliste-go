@@ -33,6 +33,7 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println(r.URL.Path)
+	var id uint64
 	switch {
 	case match("/logout", METHOD_ALL, r):
 		s.logoutHandler(w, r)
@@ -43,6 +44,8 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		renderEditWishTemplate(s, w, td)
 	case match("/wish", METHOD_POST, r):
 		s.editWishPostHandler(user, w, r)
+	case match("/wish/:id/delete", METHOD_GET, r, &id):
+		s.deleteWishHandler(user, w, r, id)
 	default:
 		s.notFoundHandler(w, r)
 	}
@@ -62,6 +65,10 @@ func match(expectedPattern string, expectedMethods []string, r *http.Request, va
 	pathSlices := strings.Split(path, "/")
 	patternSlices := strings.Split(expectedPattern, "/")
 
+	if len(pathSlices) != len(patternSlices) {
+		return false
+	}
+
 	argumentIdx := 0
 
 	for i, patternPart := range(patternSlices) {
@@ -76,6 +83,18 @@ func match(expectedPattern string, expectedMethods []string, r *http.Request, va
 				*p = pathSlices[i]
 			case *int:
 				n, err := strconv.Atoi(pathSlices[i])
+				if err != nil {
+					return false
+				}
+				*p = n
+			case *uint64:
+				n, err := strconv.ParseUint(pathSlices[i], 10, 64)
+				if err != nil {
+					return false
+				}
+				*p = n
+			case *int64:
+				n, err := strconv.ParseInt(pathSlices[i], 10, 64)
 				if err != nil {
 					return false
 				}
