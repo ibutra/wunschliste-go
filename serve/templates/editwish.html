@@ -4,7 +4,7 @@
   {{with .Message}}
   <div class="notification is-danger is-light">{{.}}</div>
   {{end}}
-  <form action="/wish" method="POST">
+  <form action="/wish{{.TargetLink}}" method="POST">
     <div class="field">
       <label class="label" for="name">Beschreibung:</label>
       <div class="control">
@@ -20,7 +20,7 @@
     <div class="field">
       <label class="label" for="price">Preis:</label>
       <div class="control">
-        <input class="input{{if .LinkRed}} is-danger{{end}}" type="number" name="price" step="0.01" value=
+        <input class="input{{if .PriceRed}} is-danger{{end}}" type="number" name="price" step="0.01" value=
         {{with .PriceText}}
         "{{.}}"
         {{else}}

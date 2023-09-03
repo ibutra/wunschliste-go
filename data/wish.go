@@ -53,8 +53,7 @@ func (u *User) CreateWish(name string, price float64, link string) (Wish, error)
 		if err != nil {
 			return err
 		}
-		bucket.Put(convertUInt64ToByteArray(id), payload)
-		return nil
+		return bucket.Put(convertUInt64ToByteArray(id), payload)
 	})
 	return wish, err
 }
@@ -154,8 +153,31 @@ func (w *Wish) Delete() error {
 		if bucket == nil {
 			return UserWishBucketMissing
 		}
-		fmt.Println(w)
 		return bucket.Delete(convertUInt64ToByteArray(w.Id))
+	})
+	return err
+}
+
+func (w *Wish) Save() error {
+	err := w.data.db.Update(func (tx *bolt.Tx) error {
+		bucket := tx.Bucket(wishBucketName)
+		if bucket == nil {
+			return WishBucketMissing
+		}
+		bucket = bucket.Bucket([]byte(w.User))
+		if bucket == nil {
+			return UserWishBucketMissing
+		}
+		key := convertUInt64ToByteArray(w.Id)
+		wishData := bucket.Get(key)
+		if wishData == nil {
+			return WishNotPresent
+		}
+		payload, err := json.Marshal(w)
+		if err != nil {
+			return err
+		}
+		return bucket.Put(key, payload)
 	})
 	return err
 }

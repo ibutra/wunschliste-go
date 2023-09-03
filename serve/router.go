@@ -1,10 +1,10 @@
 package serve
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
-	"log"
 )
 
 var METHOD_ALL    = []string{"GET", "POST", "PUT", "DELETE"}
@@ -40,12 +40,16 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 	case match("/", METHOD_ALL, r):
 		s.indexHandler(user, w, r)
 	case match("/wish", METHOD_GET, r):
-		td := templateData {"", "", "", "", false, false}
-		renderEditWishTemplate(s, w, td)
+		td := templateData{"", "", "", "", false, false, ""}
+		s.renderEditWishTemplate(w, td)
 	case match("/wish", METHOD_POST, r):
-		s.editWishPostHandler(user, w, r)
+		s.newWishPostHandler(user, w, r)
 	case match("/wish/:id/delete", METHOD_GET, r, &id):
 		s.deleteWishHandler(user, w, r, id)
+	case match("/wish/:id/edit", METHOD_GET, r, &id):
+		s.editWishGetHandler(user, w, r, id)
+	case match("/wish/:id/edit", METHOD_POST, r, &id):
+		s.editWishPostHandler(user, w, r, id)
 	default:
 		s.notFoundHandler(w, r)
 	}

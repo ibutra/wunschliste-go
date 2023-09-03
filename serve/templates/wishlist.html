@@ -24,7 +24,7 @@
       <td><a href={{.Link}}>{{.Link}}</a></td>
       <td>{{printf "%.2f" .Price}}€</td>
       {{if $canEdit}}
-        <td><a class="button is-warning">Bearbeiten</a></td>
+        <td><a class="button is-warning" href="/wish/{{.Id}}/edit">Bearbeiten</a></td>
         <td><a class="button is-danger" href="/wish/{{.Id}}/delete">Löschen</a></td>
       {{end}}
       {{if $canReserve}}
