@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-var METHOD_ALL    = []string{"GET", "POST", "PUT", "DELETE"}
-var METHOD_GET    = []string{"GET"}
-var METHOD_POST   = []string{"POST"}
-var METHOD_PUT    = []string{"PUT"}
+var METHOD_ALL = []string{"GET", "POST", "PUT", "DELETE"}
+var METHOD_GET = []string{"GET"}
+var METHOD_POST = []string{"POST"}
+var METHOD_PUT = []string{"PUT"}
 var METHOD_DELETE = []string{"DELETE"}
 
 /*
@@ -23,7 +23,7 @@ var METHOD_DELETE = []string{"DELETE"}
 
 func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 	//Not logged in urls
-	if match("/login", METHOD_ALL, r){
+	if match("/login", METHOD_ALL, r) {
 		s.loginHandler(w, r)
 		return
 	}
@@ -57,7 +57,7 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 
 func match(expectedPattern string, expectedMethods []string, r *http.Request, vars ...any) bool {
 	methodOk := false
-	for _, method := range(expectedMethods) {
+	for _, method := range expectedMethods {
 		if method == r.Method {
 			methodOk = true
 		}
@@ -75,7 +75,7 @@ func match(expectedPattern string, expectedMethods []string, r *http.Request, va
 
 	argumentIdx := 0
 
-	for i, patternPart := range(patternSlices) {
+	for i, patternPart := range patternSlices {
 		if len(patternPart) > 0 && patternPart[0] == ':' {
 			//We have a variable to fill
 			if argumentIdx >= len(vars) {

@@ -1,10 +1,10 @@
 package serve
 
 import (
+	"encoding/base64"
 	"log"
 	"net/http"
 	"time"
-	"encoding/base64"
 
 	"github.com/ibutra/wunschliste-go/data"
 )
@@ -50,7 +50,7 @@ func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func renderLoginTemplate(s *Serve, w http.ResponseWriter, message string) {
 	if message != "" {
-		s.templates.ExecuteTemplate(w, "login", struct {Message string}{Message: message})
+		s.templates.ExecuteTemplate(w, "login", struct{ Message string }{Message: message})
 	} else {
 		s.templates.ExecuteTemplate(w, "login", nil)
 	}
@@ -62,13 +62,13 @@ func login(user data.User, w http.ResponseWriter) error {
 	if err != nil {
 		return err
 	}
-	cookie := http.Cookie {
-		Name: sessionCookieName,
-		Value: base64.StdEncoding.EncodeToString(session.Secret),
-		Expires: session.ValidUntil,
+	cookie := http.Cookie{
+		Name:     sessionCookieName,
+		Value:    base64.StdEncoding.EncodeToString(session.Secret),
+		Expires:  session.ValidUntil,
 		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
-		Secure: true,
+		Secure:   true,
 	}
 	http.SetCookie(w, &cookie)
 	return nil

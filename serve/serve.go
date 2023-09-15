@@ -2,9 +2,9 @@ package serve
 
 import (
 	"embed"
+	"github.com/ibutra/wunschliste-go/data"
 	"html/template"
 	"net/http"
-	"github.com/ibutra/wunschliste-go/data"
 )
 
 //go:embed templates/*.html
@@ -15,12 +15,12 @@ var staticFS embed.FS
 
 type Serve struct {
 	templates *template.Template
-	data *data.Data
-	mux *http.ServeMux
+	data      *data.Data
+	mux       *http.ServeMux
 }
 
-type serveHandler func (*Serve, http.ResponseWriter, *http.Request)
-type loggedInServeHandler func (*Serve, data.User, http.ResponseWriter, *http.Request)
+type serveHandler func(*Serve, http.ResponseWriter, *http.Request)
+type loggedInServeHandler func(*Serve, data.User, http.ResponseWriter, *http.Request)
 
 func NewServe(data *data.Data) (*Serve, error) {
 	t, err := template.ParseFS(templatesFS, "templates/*.html")
@@ -31,16 +31,16 @@ func NewServe(data *data.Data) (*Serve, error) {
 
 	mux := http.NewServeMux()
 
-	serve := &Serve {
+	serve := &Serve{
 		templates: templates,
-		data: data,
-		mux: mux,
+		data:      data,
+		mux:       mux,
 	}
 
 	//*******************
 	// HANDLERS
 	//*******************
-	mux.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		serve.ServeRoute(w, r)
 	})
 	mux.Handle("/static/", http.FileServer(http.FS(staticFS)))
@@ -53,13 +53,13 @@ func (s *Serve) Serve() error {
 }
 
 func (s *Serve) addHandler(pattern string, handler serveHandler) {
-	s.mux.HandleFunc(pattern, func (w http.ResponseWriter, r *http.Request) {
+	s.mux.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 		handler(s, w, r)
 	})
 }
 
 func (s *Serve) addLoggedInHandler(pattern string, handler loggedInServeHandler) {
-	s.mux.HandleFunc(pattern, func (w http.ResponseWriter, r *http.Request) {
+	s.mux.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 		loggedIn, user := s.getLoggedInUserOrRedirect(w, r)
 		if !loggedIn {
 			return

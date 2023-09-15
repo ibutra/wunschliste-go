@@ -8,8 +8,8 @@ import (
 )
 
 type templateInfo struct {
-	Wishs []data.Wish
-	CanEdit bool
+	Wishs      []data.Wish
+	CanEdit    bool
 	CanReserve bool
 }
 
@@ -18,9 +18,9 @@ func (serve *Serve) indexHandler(user data.User, w http.ResponseWriter, r *http.
 	if err != nil {
 		log.Println("Failed to get wishs: ", err)
 	}
-	ti := templateInfo {
-		Wishs: wishs,
-		CanEdit: true,
+	ti := templateInfo{
+		Wishs:      wishs,
+		CanEdit:    true,
 		CanReserve: false,
 	}
 	if err := serve.templates.ExecuteTemplate(w, "index", ti); err != nil {

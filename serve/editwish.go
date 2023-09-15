@@ -1,8 +1,8 @@
 package serve
 
 import (
-	"log"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -10,19 +10,19 @@ import (
 )
 
 type templateData struct {
-	Message string;
-	Name string;
-	Link string;
-	PriceText string;
-	NameRed bool;
-	PriceRed bool;
-	TargetLink string;
+	Message    string
+	Name       string
+	Link       string
+	PriceText  string
+	NameRed    bool
+	PriceRed   bool
+	TargetLink string
 }
 
 type validatedInput struct {
-	name string;
-	link string;
-	price float64;
+	name  string
+	link  string
+	price float64
 }
 
 func (serve *Serve) newWishPostHandler(user data.User, w http.ResponseWriter, r *http.Request) {
@@ -31,12 +31,12 @@ func (serve *Serve) newWishPostHandler(user data.User, w http.ResponseWriter, r 
 		if err != nil {
 			log.Println(err)
 			td := templateData{
-				Message: "Fehler beim Speichern des Wunsches. Administrator informiert",
-				Name: r.PostFormValue("name"),
-				Link: r.PostFormValue("link"),
-				PriceText: r.PostFormValue("price"),
-				NameRed: false,
-				PriceRed: false,
+				Message:    "Fehler beim Speichern des Wunsches. Administrator informiert",
+				Name:       r.PostFormValue("name"),
+				Link:       r.PostFormValue("link"),
+				PriceText:  r.PostFormValue("price"),
+				NameRed:    false,
+				PriceRed:   false,
 				TargetLink: "",
 			}
 			serve.renderEditWishTemplate(w, td)
@@ -54,13 +54,13 @@ func (s *Serve) editWishGetHandler(user data.User, w http.ResponseWriter, r *htt
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
-	td := templateData {
-		Message: "",
-		Name: wish.Name,
-		Link: wish.Link,
-		PriceText: strconv.FormatFloat(wish.Price, 'f', 2, 64),
-		NameRed: false,
-		PriceRed: false,
+	td := templateData{
+		Message:    "",
+		Name:       wish.Name,
+		Link:       wish.Link,
+		PriceText:  strconv.FormatFloat(wish.Price, 'f', 2, 64),
+		NameRed:    false,
+		PriceRed:   false,
 		TargetLink: fmt.Sprintf("/%v/edit", wishId),
 	}
 	s.renderEditWishTemplate(w, td)
@@ -70,12 +70,12 @@ func (s *Serve) editWishPostHandler(user data.User, w http.ResponseWriter, r *ht
 	target := fmt.Sprintf("/%v/edit", wishId)
 	if inputValid, input := validateWishInput(s, w, r, target); inputValid {
 		td := templateData{
-			Message: "Fehler beim Speichern des Wunsches. Administrator informiert",
-			Name: r.PostFormValue("name"),
-			Link: r.PostFormValue("link"),
-			PriceText: r.PostFormValue("price"),
-			NameRed: false,
-			PriceRed: false,
+			Message:    "Fehler beim Speichern des Wunsches. Administrator informiert",
+			Name:       r.PostFormValue("name"),
+			Link:       r.PostFormValue("link"),
+			PriceText:  r.PostFormValue("price"),
+			NameRed:    false,
+			PriceRed:   false,
 			TargetLink: target,
 		}
 		wish, err := user.GetWishWithId(wishId)
@@ -104,12 +104,12 @@ func validateWishInput(s *Serve, w http.ResponseWriter, r *http.Request, target 
 	link := r.PostFormValue("link")
 	priceText := r.PostFormValue("price")
 	td := templateData{
-		Message: "",
-		Name: name,
-		Link: link,
-		PriceText: priceText,
-		NameRed: false,
-		PriceRed: false,
+		Message:    "",
+		Name:       name,
+		Link:       link,
+		PriceText:  priceText,
+		NameRed:    false,
+		PriceRed:   false,
 		TargetLink: target,
 	}
 	if name == "" {
@@ -132,9 +132,9 @@ func validateWishInput(s *Serve, w http.ResponseWriter, r *http.Request, target 
 		s.renderEditWishTemplate(w, td)
 		return false, validatedInput{}
 	}
-	return true, validatedInput {
-		name: name,
-		link: link,
+	return true, validatedInput{
+		name:  name,
+		link:  link,
 		price: price,
 	}
 }
@@ -142,7 +142,7 @@ func validateWishInput(s *Serve, w http.ResponseWriter, r *http.Request, target 
 func (s *Serve) deleteWishHandler(user data.User, w http.ResponseWriter, r *http.Request, wishId uint64) {
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 
-	wish, err := user.GetWishWithId(wishId);
+	wish, err := user.GetWishWithId(wishId)
 	if err != nil {
 		if err != data.WishNotPresent {
 			log.Println(err)

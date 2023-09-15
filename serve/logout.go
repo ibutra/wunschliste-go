@@ -1,9 +1,9 @@
 package serve
 
 import (
-	"net/http"
 	"encoding/base64"
 	"log"
+	"net/http"
 )
 
 func (s *Serve) logoutHandler(w http.ResponseWriter, r *http.Request) {

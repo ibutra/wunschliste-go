@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
 	"fmt"
+	"log"
 
 	"github.com/ibutra/wunschliste-go/data"
 	"github.com/ibutra/wunschliste-go/serve"
@@ -17,7 +17,7 @@ func main() {
 	defer d.Close()
 
 	if _, err := d.GetUser("Stefan"); err == data.UserNotExistingError {
-		user ,err := d.CreateUser("Stefan", "blub")
+		user, err := d.CreateUser("Stefan", "blub")
 		if err != nil {
 			log.Println("failed to create testuser", err)
 			return

@@ -20,7 +20,7 @@ type Wish struct {
 	Link     string
 	User     string //owning user
 	Reserved string //Userid who reserved
-	Count		 int64 //How many are wished?
+	Count    int64  //How many are wished?
 	Id       uint64 `json:"-"` //Must not be changed!
 	data     *Data
 }
@@ -82,7 +82,7 @@ func (u *User) GetWishs() ([]Wish, error) {
 			wish.Id = id
 			wish.data = u.data
 			if wish.Count == 0 {
-				wish.Count = 1;
+				wish.Count = 1
 			}
 
 			wishs = append(wishs, wish)
@@ -122,8 +122,8 @@ func (u *User) GetWishWithId(id uint64) (Wish, error) {
 }
 
 func (w *Wish) Reserve(who *User) error {
-	err := w.data.db.Update(func (tx *bolt.Tx) error {
-	  bucket := tx.Bucket(wishBucketName)
+	err := w.data.db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(wishBucketName)
 		if bucket == nil {
 			return WishBucketMissing
 		}
@@ -159,7 +159,7 @@ func (w *Wish) Delete() error {
 }
 
 func (w *Wish) Save() error {
-	err := w.data.db.Update(func (tx *bolt.Tx) error {
+	err := w.data.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(wishBucketName)
 		if bucket == nil {
 			return WishBucketMissing

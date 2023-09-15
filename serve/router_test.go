@@ -22,8 +22,8 @@ func TestMatch(t *testing.T) {
 	if match("/", []string{"POST"}, r) {
 		t.Fail()
 	}
-	
-	r,err = http.NewRequest("POST", "/index", nil)
+
+	r, err = http.NewRequest("POST", "/index", nil)
 	if err != nil {
 		t.Fatal()
 	}
@@ -40,7 +40,7 @@ func TestMatch(t *testing.T) {
 		t.Fail()
 	}
 
-	r,err = http.NewRequest("GET", "/book/12", nil)
+	r, err = http.NewRequest("GET", "/book/12", nil)
 	if err != nil {
 		t.Fatal()
 	}
