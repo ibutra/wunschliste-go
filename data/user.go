@@ -116,6 +116,29 @@ func (d *Data) GetUser(name string) (User, error) {
 	return user, err
 }
 
+func (d *Data) GetUsers() ([]User, error) {
+	users := make([]User, 0)
+	err := d.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(userBucketName))
+		if bucket == nil {
+			return UserNotExistingError
+		}
+		err := bucket.ForEach(func (k, v []byte) error {
+			user := User{
+				data: d,
+			}
+			err := json.Unmarshal(v, &user)
+			if err != nil {
+				return err
+			}
+			users = append(users, user)
+			return nil
+		})
+		return err
+	})
+	return users, err
+}
+
 func hashPassword(password string, salt []byte) []byte {
 	hash := argon2.IDKey([]byte(password), salt, ITERATION_COUNT, MEMORY, CPU_COUNT, HASH_LENGTH)
 	return hash
