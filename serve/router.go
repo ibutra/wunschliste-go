@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-var METHOD_ALL = []string{"GET", "POST", "PUT", "DELETE"}
-var METHOD_GET = []string{"GET"}
-var METHOD_POST = []string{"POST"}
-var METHOD_PUT = []string{"PUT"}
+var METHOD_ALL    = []string{"GET", "POST", "PUT", "DELETE"}
+var METHOD_GET    = []string{"GET"}
+var METHOD_POST   = []string{"POST"}
+var METHOD_PUT    = []string{"PUT"}
 var METHOD_DELETE = []string{"DELETE"}
 
 /*
@@ -18,7 +18,6 @@ var METHOD_DELETE = []string{"DELETE"}
  * 1. Handle basic, text only routes. E.g.: /index
  * 2. Handle routes based on method: GET, POST, PUT, DELETE. Also multiple methods should be allowed: {GET, POST}
  * 3. Handle placeholder values: /wish/:id/
- * 4. More specific routes should have precedence
  */
 
 func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
@@ -32,8 +31,9 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 	if !loggedIn {
 		return
 	}
-	log.Println(r.URL.Path)
+
 	var id uint64
+	var userName string
 	switch {
 	case match("/logout", METHOD_ALL, r):
 		s.logoutHandler(w, r)
@@ -50,6 +50,8 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		s.editWishGetHandler(user, w, r, id)
 	case match("/wish/:id/edit", METHOD_POST, r, &id):
 		s.editWishPostHandler(user, w, r, id)
+	case match("/list/:user", METHOD_ALL, r, &userName):
+		s.otherUserHandler(user, w, r, userName)
 	default:
 		s.notFoundHandler(w, r)
 	}
@@ -104,7 +106,7 @@ func match(expectedPattern string, expectedMethods []string, r *http.Request, va
 				}
 				*p = n
 			default:
-				log.Println("vars must be *string or *int")
+				log.Println("vars must be {*string, *int, *uint64, *int64}")
 				return false
 			}
 			argumentIdx += 1

@@ -25,6 +25,11 @@ type validatedInput struct {
 	price float64
 }
 
+func (serve *Serve) newWishGetHandler(user data.User, w http.ResponseWriter, r *http.Request) {
+		td := templateData{"", "", "", "", false, false, ""}
+		serve.renderEditWishTemplate(w, td)
+}
+
 func (serve *Serve) newWishPostHandler(user data.User, w http.ResponseWriter, r *http.Request) {
 	if inputValid, input := validateWishInput(serve, w, r, ""); inputValid {
 		_, err := user.CreateWish(input.name, input.price, input.link)
@@ -156,6 +161,7 @@ func (s *Serve) deleteWishHandler(user data.User, w http.ResponseWriter, r *http
 }
 
 func (s *Serve) renderEditWishTemplate(w http.ResponseWriter, td templateData) {
+	s.renderNavbar(w)
 	if err := s.templates.ExecuteTemplate(w, "editWish", td); err != nil {
 		log.Println(err)
 	}

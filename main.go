@@ -25,6 +25,15 @@ func main() {
 		user.CreateWish("Test1", 12.4, "wunschliste.ibutra.com")
 		user.CreateWish("Test2", 15.4, "wunschliste.ibutra.com")
 	}
+	if _, err := d.GetUser("Kim"); err == data.UserNotExistingError {
+		user, err := d.CreateUser("Kim", "blub")
+		if err != nil {
+			log.Println("failed to create testuser", err)
+			return
+		}
+		user.CreateWish("Wunsch1", 12.4, "")
+		user.CreateWish("Wunsch2", 15.4, "")
+	}
 
 	fmt.Print(d.String())
 

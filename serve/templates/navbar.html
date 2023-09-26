@@ -1,0 +1,40 @@
+{{define `navbar`}}
+{{template `head`}}
+<nav class="navbar" role="navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu" id="navMenu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">
+        Meine Wunschliste
+      </a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Wunschlisten
+        </a>
+        <div class="navbar-dropdown">
+          {{range .Users}}
+            <a class="navbar-item" href="/list/{{.Name}}">
+              {{.Name}}
+            </a>
+          {{end}}
+        </div>
+      </div>
+    </div>
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <a class="button is-light" href="/logout">
+            Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+{{end}}
