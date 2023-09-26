@@ -2,9 +2,11 @@
 {{$canEdit := .CanEdit}}
 {{$canReserve := .CanReserve}}
 <section class="section container">
-  <div class="container">
-    <a class="button is-primary" href="wish">Neuer Wunsch</a>
-  </div>
+  {{if $canEdit}}
+    <div class="container">
+      <a class="button is-primary" href="wish">Neuer Wunsch</a>
+    </div>
+  {{end}}
   <table class="table is-striped is-fullwidth">
     <thead>
       <th>Wunsch</th>
