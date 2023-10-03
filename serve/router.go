@@ -22,8 +22,15 @@ var METHOD_DELETE = []string{"DELETE"}
 
 func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 	//Not logged in urls
-	if match("/login", METHOD_ALL, r) {
+	switch {
+	case match("/login", METHOD_ALL, r):
 		s.loginHandler(w, r)
+		return
+	case match("/register", METHOD_GET, r):
+		s.registerHandlerGet(w, r)
+		return
+	case match("/register", METHOD_POST, r):
+		s.registerHandlerPost(w, r)
 		return
 	}
 	//Ensure we are logged in for the following urls

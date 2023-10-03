@@ -26,10 +26,11 @@ var UserNotExistingError = errors.New("User does not exist")
 
 //Values must not be changed! Only public for saving to database
 type User struct {
-	Name string
-	Hash []byte
-	Salt []byte
-	data *Data
+	Name     string
+	Hash     []byte
+	Salt     []byte
+	Approved bool
+	data     *Data
 }
 
 func (d *Data) CreateUser(name string, password string) (User, error) {
@@ -51,6 +52,7 @@ func (d *Data) CreateUser(name string, password string) (User, error) {
 		Name: name,
 		Hash: hash,
 		Salt: salt,
+		Approved: false,
 		data: d,
 	}
 	err = user.save()
@@ -91,6 +93,11 @@ func (u *User) ChangePassword(password string) error {
 func (u *User) CheckPassword(password string) bool {
 	enteredHash := hashPassword(password, u.Salt)
 	return subtle.ConstantTimeCompare(enteredHash, u.Hash) == 1
+}
+
+func (u *User) Approve() error {
+	u.Approved = true
+	return u.save()
 }
 
 func (u *User) String() string {

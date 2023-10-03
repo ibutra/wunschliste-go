@@ -1,0 +1,25 @@
+package serve
+
+import (
+	"log"
+	"net/http"
+)
+
+func (s *Serve) registerHandlerGet(w http.ResponseWriter, r *http.Request) {
+	err := s.templates.ExecuteTemplate(w, "register", nil)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func (s *Serve) registerHandlerPost(w http.ResponseWriter, r *http.Request) {
+	name := r.PostFormValue("name")
+	password := r.PostFormValue("password")
+	_, err := s.data.CreateUser(name, password)
+	if err != nil {
+		log.Println(err)
+		s.templates.ExecuteTemplate(w, "register", "Failure registering")
+		return
+	}
+	s.templates.ExecuteTemplate(w, "register", "You have been registered. The admin has to enable your account")
+}

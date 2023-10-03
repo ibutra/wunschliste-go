@@ -35,6 +35,10 @@ func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
 		renderLoginTemplate(s, w, "User not found")
 		return
 	}
+	if !user.Approved {
+		renderLoginTemplate(s, w, "You have not been approved yet")
+		return
+	}
 	if !user.CheckPassword(password) {
 		renderLoginTemplate(s, w, "Incorrect password")
 		return
@@ -49,7 +53,6 @@ func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderLoginTemplate(s *Serve, w http.ResponseWriter, message string) {
-	s.templates.ExecuteTemplate(w, "head", nil)
 	if message != "" {
 		s.templates.ExecuteTemplate(w, "login", struct{ Message string }{Message: message})
 	} else {

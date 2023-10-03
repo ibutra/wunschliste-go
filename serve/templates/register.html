@@ -1,32 +1,32 @@
-{{define `login`}}
+{{define `register`}}
 {{template `head`}}
-<h1 class="title">Login</h1>
-{{with .Message}}
+<h1 class="title">Register</h1>
+{{if .}}
 <div class="notification is-danger is-light">{{.}}</div>
 {{end}}
 <div class="box">
-  <form action="/login" method="POST">
+  <form action="/register" method="POST">
     <div class="field">
       <label class="label" for="name">Name:</label>
       <div class="control">
-        <input class="input" type="text" name="name" value="Stefan" placeholder="Name">
+        <input class="input" type="text" name="name" placeholder="Name">
       </div>
     </div>
     <div class="field">
       <label class="label" for="password">Password:</label>
       <div class="control">
-        <input class="input" type="password" name="password" value="blub"><br>
+        <input class="input" type="password" name="password"><br>
       </div>
     </div>
     <div class="field">
       <div class="control">
-        <input type="submit" class="button is-primary" value="Login">
+        <input type="submit" class="button is-primary" value="Register">
       </div>
     </div>
   </form>
 </div>
 <div class="box">
-  <a href="/register">Register</a>
+  <a href="/">Back</a>
 </div>
 {{template `foot`}}
 {{end}}
