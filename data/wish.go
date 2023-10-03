@@ -143,6 +143,28 @@ func (w *Wish) Reserve(who *User) error {
 	return err
 }
 
+func (w *Wish) Unreserve() error {
+	err := w.data.db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(wishBucketName)
+		if bucket == nil {
+			return WishBucketMissing
+		}
+		bucket = bucket.Bucket([]byte(w.User))
+		if bucket == nil {
+			return UserWishBucketMissing
+		}
+		oldReserved := w.Reserved
+		w.Reserved = ""
+		payload, err := json.Marshal(w)
+		if err != nil {
+			w.Reserved = oldReserved
+			return err
+		}
+		return bucket.Put(convertUInt64ToByteArray(w.Id), payload)
+	})
+	return err
+}
+
 func (w *Wish) Delete() error {
 	err := w.data.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(wishBucketName)

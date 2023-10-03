@@ -30,7 +30,12 @@
         <td><a class="button is-danger" href="/wish/{{.Id}}/delete">Löschen</a></td>
       {{end}}
       {{if $canReserve}}
-        <td><a class="button is-primary">Reservieren</a></td>
+        {{$strLen := len .Reserved}}
+        {{if eq $strLen 0}}
+          <td><a class="button is-primary" href="/list/{{.User}}/wish/{{.Id}}/reserve">Reservieren</a></td>
+        {{else}}
+          <td><a class="button is-primary" href="/list/{{.User}}/wish/{{.Id}}/unreserve">Unreserve</a></td>
+        {{end}}
       {{end}}
     </tr>
     {{else}}

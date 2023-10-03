@@ -49,6 +49,7 @@ func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderLoginTemplate(s *Serve, w http.ResponseWriter, message string) {
+	s.templates.ExecuteTemplate(w, "head", nil)
 	if message != "" {
 		s.templates.ExecuteTemplate(w, "login", struct{ Message string }{Message: message})
 	} else {

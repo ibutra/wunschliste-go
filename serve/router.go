@@ -52,6 +52,10 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		s.editWishPostHandler(user, w, r, id)
 	case match("/list/:user", METHOD_ALL, r, &userName):
 		s.otherUserHandler(user, w, r, userName)
+	case match("/list/:user/wish/:id/reserve", METHOD_ALL, r, &userName, &id):
+		s.reserveWishHandler(user, w, r, userName, id)
+	case match("/list/:user/wish/:id/unreserve", METHOD_ALL, r, &userName, &id):
+		s.unreserveWishHandler(user, w, r, userName, id)
 	default:
 		s.notFoundHandler(w, r)
 	}
