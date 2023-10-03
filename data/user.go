@@ -30,6 +30,7 @@ type User struct {
 	Hash     []byte
 	Salt     []byte
 	Approved bool
+	Admin		 bool
 	data     *Data
 }
 
@@ -53,6 +54,7 @@ func (d *Data) CreateUser(name string, password string) (User, error) {
 		Hash: hash,
 		Salt: salt,
 		Approved: false,
+		Admin: false,
 		data: d,
 	}
 	err = user.save()
@@ -95,9 +97,36 @@ func (u *User) CheckPassword(password string) bool {
 	return subtle.ConstantTimeCompare(enteredHash, u.Hash) == 1
 }
 
+func (u *User) SetAdmin(admin bool) error {
+	u.Admin = admin
+	return u.save()
+}
+
 func (u *User) Approve() error {
 	u.Approved = true
 	return u.save()
+}
+
+func (u *User) Delete() error {
+	err := u.data.db.Update(func(tx *bolt.Tx) error {
+		//Delete all wishs
+		bucket := tx.Bucket(wishBucketName)
+		if bucket != nil {
+			if bucket.Bucket([]byte(u.Name)) != nil {
+				err := bucket.DeleteBucket([]byte(u.Name))
+				if err != nil {
+					return err
+				}
+			}
+		}
+		//Delete user
+		bucket = tx.Bucket([]byte(userBucketName))
+		if bucket == nil {
+			return UserNotExistingError
+		}
+		return bucket.Delete([]byte(u.Name))
+	})
+	return err
 }
 
 func (u *User) String() string {

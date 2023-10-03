@@ -14,8 +14,8 @@ type templateInfo struct {
 	CanReserve bool
 }
 
-func (serve *Serve) indexHandler(user data.User, w http.ResponseWriter, r *http.Request) {
-	wishs, err := user.GetWishs()
+func (serve *Serve) indexHandler(loggedInUser data.User, w http.ResponseWriter, r *http.Request) {
+	wishs, err := loggedInUser.GetWishs()
 	if err != nil {
 		log.Println("Failed to get wishs: ", err)
 	}
@@ -24,7 +24,7 @@ func (serve *Serve) indexHandler(user data.User, w http.ResponseWriter, r *http.
 		CanEdit:    true,
 		CanReserve: false,
 	}
-	serve.renderNavbar(w)
+	serve.renderNavbar(loggedInUser, w)
 	if err := serve.templates.ExecuteTemplate(w, "wishlist", ti); err != nil {
 		log.Println(err)
 	}
@@ -32,7 +32,7 @@ func (serve *Serve) indexHandler(user data.User, w http.ResponseWriter, r *http.
 
 func (serve *Serve) otherUserHandler(loggedInUser data.User, w http.ResponseWriter, r *http.Request, userName string) {
 	if loggedInUser.Name == userName {
-		serve.renderUserList(loggedInUser, w, r, true, false, loggedInUser.Name)
+		serve.renderUserList(loggedInUser, loggedInUser, w, r, true, false)
 	} else {
 		user, err := serve.data.GetUser(userName)
 		if err != nil {
@@ -40,15 +40,15 @@ func (serve *Serve) otherUserHandler(loggedInUser data.User, w http.ResponseWrit
 			http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 			return
 		}
-		serve.renderUserList(user, w, r, false, true, loggedInUser.Name)
+		serve.renderUserList(loggedInUser, user, w, r, false, true)
 	}
 }
 
-func (serve *Serve) renderUserList(user data.User, w http.ResponseWriter, r *http.Request, canEdit bool, canReserve bool, lookingUser string) {
+func (serve *Serve) renderUserList(loggedInUser data.User, userToShow data.User, w http.ResponseWriter, r *http.Request, canEdit bool, canReserve bool) {
 	var ti templateInfo
 	ti.CanEdit = canEdit
 	ti.CanReserve = canReserve
-	allWishs, err := user.GetWishs()
+	allWishs, err := userToShow.GetWishs()
 	if err != nil {
 		log.Println("Failed to get wishs for user: ", err)
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
@@ -56,17 +56,17 @@ func (serve *Serve) renderUserList(user data.User, w http.ResponseWriter, r *htt
 	}
 	wishs := make([]data.Wish, 0)
 	//Only show wishes that are reserved by us or not reserved
-	if lookingUser == user.Name {
+	if loggedInUser.Name == userToShow.Name {
 		wishs = allWishs
 	} else {
 		for _, wish := range(allWishs) {
-			if wish.Reserved == "" || wish.Reserved == lookingUser {
+			if wish.Reserved == "" || wish.Reserved == loggedInUser.Name {
 				wishs = append(wishs, wish)
 			}
 		}
 	}
 	ti.Wishs = wishs
-	serve.renderNavbar(w)
+	serve.renderNavbar(loggedInUser, w)
 	if err := serve.templates.ExecuteTemplate(w, "wishlist", ti); err != nil {
 		log.Println(err)
 	}

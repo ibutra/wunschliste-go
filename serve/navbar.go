@@ -8,11 +8,12 @@ import (
 )
 
 type navbarData struct {
-	Users []data.User
-	Msg   string
+	Users        []data.User
+	Msg          string
+	LoggedInUser data.User
 }
 
-func (s *Serve) renderNavbar(w http.ResponseWriter) {
+func (s *Serve) renderNavbar(loggedInUser data.User, w http.ResponseWriter) {
 	var nd  navbarData
 	users, err := s.data.GetUsers()
 	if err != nil {
@@ -21,5 +22,6 @@ func (s *Serve) renderNavbar(w http.ResponseWriter) {
 	} else {
 		nd.Users = users
 	}
+	nd.LoggedInUser = loggedInUser
 	s.templates.ExecuteTemplate(w, "navbar", nd)
 }

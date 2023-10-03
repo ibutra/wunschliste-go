@@ -1,0 +1,28 @@
+{{define `userlist`}}
+{{if not (eq .Message "")}}
+  <div class="notification is-danger is-light">{{.Message}}</div>
+{{end}}
+<section class="section container">
+  <table class="table is-striped is-fullwidth">
+    <thead>
+      <th>Name</th>
+      <th>Approve</th>
+      <th>Delete</th>
+    </thead>
+    {{range .Users}}
+      <tr>
+        <td>{{.Name}}</td>
+        <td>
+          {{if .Approved}}
+            Approved
+          {{else}}
+            <a class="button is-warning" href="/admin/user/{{.Name}}/approve">Approve</a>
+          {{end}}
+        </td>
+        <td><a class="button is-danger" href="/admin/user/{{.Name}}/delete">Delete</a>
+      </tr>
+    {{end}}
+  </table>
+</section>
+{{template `foot`}}
+{{end}}

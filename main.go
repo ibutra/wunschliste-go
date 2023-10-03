@@ -39,7 +39,7 @@ func main() {
 //Returns false if execution should not continue
 func handleArguments(d *data.Data) bool{
 	var cmd string = ""
-	flag.StringVar(&cmd, "cmd", "", "Command for the executable: CreateUser, Approve")
+	flag.StringVar(&cmd, "cmd", "", "Command for the executable: CreateUser, Approve, MakeAdmin")
 	var user string = ""
 	flag.StringVar(&user, "user", "", "User for the given command")
 	var pw string = ""
@@ -74,6 +74,22 @@ func handleArguments(d *data.Data) bool{
 			return false
 		}
 		err = user.Approve()
+		if err != nil {
+			log.Println(err)
+			return false
+		}
+		return false
+	case "MakeAdmin":
+		if user == "" {
+			log.Println("You must provide a user")
+			return false
+		}
+		user, err := d.GetUser(user)
+		if err != nil {
+			log.Println(err)
+			return false
+		}
+		err = user.SetAdmin(true)
 		if err != nil {
 			log.Println(err)
 			return false

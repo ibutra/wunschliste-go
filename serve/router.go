@@ -48,7 +48,7 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		s.indexHandler(user, w, r)
 	case match("/wish", METHOD_GET, r):
 		td := templateData{"", "", "", "", false, false, ""}
-		s.renderEditWishTemplate(w, td)
+		s.renderEditWishTemplate(user, w, td)
 	case match("/wish", METHOD_POST, r):
 		s.newWishPostHandler(user, w, r)
 	case match("/wish/:id/delete", METHOD_GET, r, &id):
@@ -63,8 +63,14 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		s.reserveWishHandler(user, w, r, userName, id)
 	case match("/list/:user/wish/:id/unreserve", METHOD_ALL, r, &userName, &id):
 		s.unreserveWishHandler(user, w, r, userName, id)
+	case match("/admin", METHOD_ALL, r):
+		s.serveUserList(user, w, r)
+	case match("/admin/user/:user/approve", METHOD_ALL, r, &userName):
+		s.approveUserHandler(user, w, r, userName)
+	case match("/admin/user/:user/delete", METHOD_ALL, r, &userName):
+		s.deleteUserHandler(user, w, r, userName)
 	default:
-		s.notFoundHandler(w, r)
+		s.notFoundHandler(user, w, r)
 	}
 }
 

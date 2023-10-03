@@ -27,6 +27,14 @@
       </div>
     </div>
     <div class="navbar-end">
+      {{if .LoggedInUser.Admin}}
+        <div class="navbar-item">
+          <a class="button is-info" href="/admin">Admin</a>
+        </div>
+      {{end}}
+      <div class="navbar-item">
+        <span>{{.LoggedInUser.Name}}</span>
+      </div>
       <div class="navbar-item">
         <div class="buttons">
           <a class="button is-light" href="/logout">
