@@ -21,7 +21,7 @@ func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
 		renderLoginTemplate(s, w, "")
 		return
 	}
-	name := r.PostFormValue("name")
+	name := r.PostFormValue("username")
 	password := r.PostFormValue("password")
 
 	if name == "" || password == "" {
