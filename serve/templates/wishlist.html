@@ -34,13 +34,13 @@
         {{if eq $strLen 0}}
           <td><a class="button is-primary" href="/list/{{.User}}/wish/{{.Id}}/reserve">Reservieren</a></td>
         {{else}}
-          <td><a class="button is-primary" href="/list/{{.User}}/wish/{{.Id}}/unreserve">Unreserve</a></td>
+          <td><a class="button is-primary" href="/list/{{.User}}/wish/{{.Id}}/unreserve">Aufhaben</a></td>
         {{end}}
       {{end}}
     </tr>
     {{else}}
     <tr>
-      <td colspan="0">Empty</td>
+      <td colspan="0">Hier ist (noch) nichts.</td>
     </tr>
     {{end}}
   </table>

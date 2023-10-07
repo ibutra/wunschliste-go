@@ -18,7 +18,7 @@ func (s *Serve) registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 	_, err := s.data.CreateUser(name, password)
 	if err != nil {
 		log.Println(err)
-		s.templates.ExecuteTemplate(w, "register", "Failure registering")
+		s.templates.ExecuteTemplate(w, "register", "Fehler beim Registrieren")
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)

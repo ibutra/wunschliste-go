@@ -18,7 +18,7 @@ func (s *Serve) renderNavbar(loggedInUser data.User, w http.ResponseWriter) {
 	users, err := s.data.GetUsers()
 	if err != nil {
 		log.Println(err)
-		nd.Msg = "Error with data backend"
+		nd.Msg = "Fehler in der Applikation."
 	} else {
 		nd.Users = users
 	}

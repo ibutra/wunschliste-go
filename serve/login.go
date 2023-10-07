@@ -25,28 +25,28 @@ func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
 	password := r.PostFormValue("password")
 
 	if name == "" || password == "" {
-		renderLoginTemplate(s, w, "You must provide name and password")
+		renderLoginTemplate(s, w, "Es muss ein Name und Passwort angegeben werden.")
 		return
 	}
 
 	user, err := s.data.GetUser(name)
 	if err != nil {
 		log.Print(err)
-		renderLoginTemplate(s, w, "User not found")
+		renderLoginTemplate(s, w, "Falsche Login-Daten.")
 		return
 	}
 	if !user.Approved {
-		renderLoginTemplate(s, w, "You have not been approved yet")
+		renderLoginTemplate(s, w, "Sie wurden bisher nicht freigeschaltet.")
 		return
 	}
 	if !user.CheckPassword(password) {
-		renderLoginTemplate(s, w, "Incorrect password")
+		renderLoginTemplate(s, w, "Falsche Login-Daten.")
 		return
 	}
 	err = login(user, w)
 	if err != nil {
 		log.Print(err)
-		renderLoginTemplate(s, w, "Error loggin in")
+		renderLoginTemplate(s, w, "Fehler beim Einloggen.")
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
