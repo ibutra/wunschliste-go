@@ -34,6 +34,10 @@ func main() {
 	}
 
 	err = serve.Serve()
+	if err != nil {
+		log.Panic("Failed to serve ", err)
+	}
+
 }
 
 //Returns false if execution should not continue
