@@ -37,7 +37,6 @@ func main() {
 	if err != nil {
 		log.Panic("Failed to serve ", err)
 	}
-
 }
 
 //Returns false if execution should not continue

@@ -21,5 +21,5 @@ func (s *Serve) registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 		s.templates.ExecuteTemplate(w, "register", "Failure registering")
 		return
 	}
-	s.templates.ExecuteTemplate(w, "register", "You have been registered. The admin has to enable your account")
+	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
