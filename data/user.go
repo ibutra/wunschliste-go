@@ -10,6 +10,7 @@ import (
 
 	bolt "go.etcd.io/bbolt"
 	"golang.org/x/crypto/argon2"
+	"golang.org/x/exp/slices"
 )
 
 const (
@@ -26,12 +27,13 @@ var UserNotExistingError = errors.New("User does not exist")
 
 //Values must not be changed! Only public for saving to database
 type User struct {
-	Name     string
-	Hash     []byte
-	Salt     []byte
-	Approved bool
-	Admin		 bool
-	data     *Data
+	Name      string
+	Hash      []byte
+	Salt      []byte
+	Approved  bool
+	Admin     bool
+	VisibleTo []string //Name of other users we are visible to
+	data      *Data
 }
 
 func (d *Data) CreateUser(name string, password string) (User, error) {
@@ -48,6 +50,15 @@ func (d *Data) CreateUser(name string, password string) (User, error) {
 		log.Printf("Failed to generate salt: %v", err)
 		return User{}, err
 	}
+	otherUsers, err := d.GetUsers()
+	if err != nil {
+		log.Println("Failed to get other users: ", err)
+		otherUsers = make([]User, 0)
+	}
+	otherUsersNames := make([]string, 0, len(otherUsers))
+	for _, u := range(otherUsers) {
+		otherUsersNames = append(otherUsersNames, u.Name)
+	}
 	hash := hashPassword(password, salt)
 	user = User{
 		Name: name,
@@ -55,6 +66,7 @@ func (d *Data) CreateUser(name string, password string) (User, error) {
 		Salt: salt,
 		Approved: false,
 		Admin: false,
+		VisibleTo: otherUsersNames,
 		data: d,
 	}
 	err = user.save()
@@ -168,6 +180,31 @@ func (d *Data) GetUsers() ([]User, error) {
 				return err
 			}
 			users = append(users, user)
+			return nil
+		})
+		return err
+	})
+	return users, err
+}
+
+func (u *User) GetVisibleUser() ([]User, error) {
+	users := make([]User, 0)
+	err := u.data.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(userBucketName))
+		if bucket == nil {
+			return UserNotExistingError
+		}
+		err := bucket.ForEach(func (k, v []byte) error {
+			user := User{
+				data: u.data,
+			}
+			err := json.Unmarshal(v, &user)
+			if err != nil {
+				return err
+			}
+			if slices.Contains(user.VisibleTo, u.Name) {
+				users = append(users, user)
+			}
 			return nil
 		})
 		return err
