@@ -164,12 +164,30 @@ func (d *Data) GetUser(name string) (User, error) {
 	return user, err
 }
 
+func (d *Data) GetUserCount() int {
+	count := 0
+	err := d.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(userBucketName))
+		if bucket == nil {
+			return nil
+		}
+		bucketStats := bucket.Stats()
+		count = bucketStats.KeyN
+		return nil
+	})
+	if err != nil {
+		count = 0
+		log.Println(err)
+	}
+	return count
+}
+
 func (d *Data) GetUsers() ([]User, error) {
 	users := make([]User, 0)
 	err := d.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(userBucketName))
 		if bucket == nil {
-			return UserNotExistingError
+			return nil
 		}
 		err := bucket.ForEach(func (k, v []byte) error {
 			user := User{

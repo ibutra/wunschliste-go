@@ -15,11 +15,20 @@ func (s *Serve) registerHandlerGet(w http.ResponseWriter, r *http.Request) {
 func (s *Serve) registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 	name := r.PostFormValue("username")
 	password := r.PostFormValue("password")
-	_, err := s.data.CreateUser(name, password)
+	user, err := s.data.CreateUser(name, password)
 	if err != nil {
 		log.Println(err)
 		s.templates.ExecuteTemplate(w, "register", "Fehler beim Registrieren")
 		return
+	}
+	//If this is the first user, approve automatically and make admin
+	if s.data.GetUserCount() == 1 {
+		if err = user.Approve(); err != nil {
+			log.Println(err)
+		}
+		if err = user.SetAdmin(true); err != nil {
+			log.Println(err)
+		}
 	}
 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 }
