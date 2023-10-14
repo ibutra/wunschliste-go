@@ -10,7 +10,7 @@ WORKDIR /build
 RUN go mod download && go mod verify
 
 COPY . /build
-RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o /wunschliste
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o /wunschliste
 
 
 ###############
