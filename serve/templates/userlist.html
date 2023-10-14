@@ -2,6 +2,7 @@
 {{if not (eq .Message "")}}
   <div class="notification is-danger is-light">{{.Message}}</div>
 {{end}}
+{{$loggedInName := .LoggedInUser.Name}}
 <section class="section container">
   <table class="table is-striped is-fullwidth">
     <thead>
@@ -19,7 +20,11 @@
             <a class="button is-warning" href="/admin/user/{{.Name}}/approve">Approve</a>
           {{end}}
         </td>
-        <td><a class="button is-danger" href="/admin/user/{{.Name}}/delete">Delete</a>
+        <td>
+          {{if ne $loggedInName .Name}}
+            <a class="button is-danger" href="/admin/user/{{.Name}}/delete">Delete</a>
+          {{end}}
+        </td>
       </tr>
     {{end}}
   </table>

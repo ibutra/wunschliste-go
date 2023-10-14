@@ -10,6 +10,7 @@ import (
 type userlistTemplateData struct {
 	Message string
 	Users []data.User
+	LoggedInUser data.User
 }
 
 func (s *Serve) serveUserList(loggedInUser data.User, w http.ResponseWriter, r *http.Request) {
@@ -24,6 +25,7 @@ func (s *Serve) serveUserList(loggedInUser data.User, w http.ResponseWriter, r *
 		ti.Message = "Failed to get all users"
 	}
 	ti.Users = users
+	ti.LoggedInUser = loggedInUser
 	s.renderNavbar(loggedInUser, w);
 	err = s.templates.ExecuteTemplate(w, "userlist", ti)
 	if err != nil {

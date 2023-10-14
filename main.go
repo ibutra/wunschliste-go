@@ -8,7 +8,7 @@ import (
 	"github.com/ibutra/wunschliste-go/serve"
 )
 
-var dataFilePath = flag.String("file", "db.bolt", "Database file to use")
+var dataFilePath = flag.String("file", "wunschliste.bolt", "Database file to use")
 
 func main() {
 	flag.Parse()
