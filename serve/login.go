@@ -13,12 +13,14 @@ var sessionTimeout time.Duration = 100 * 365 * 24 * 60 * 60 * 1000 * 1000 * 1000
 var sessionCookieName = "wunschliste-session"
 
 func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
+	renderLoginTemplate(s, w, "")
+	return
+}
+
+func (s *Serve) loginHandlerPost(w http.ResponseWriter, r *http.Request) {
 	if loggedIn, _ := s.getLoggedInUser(r); loggedIn {
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-	if r.Method != http.MethodPost {
-		renderLoginTemplate(s, w, "")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		log.Println("User alreaddy logged in tried to access login page")
 		return
 	}
 	name := r.PostFormValue("username")
@@ -49,7 +51,7 @@ func (s *Serve) loginHandler(w http.ResponseWriter, r *http.Request) {
 		renderLoginTemplate(s, w, "Fehler beim Einloggen.")
 		return
 	}
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func renderLoginTemplate(s *Serve, w http.ResponseWriter, message string) {
@@ -109,7 +111,7 @@ func (s *Serve) getLoggedInUser(r *http.Request) (bool, data.User) {
 func (s *Serve) getLoggedInUserOrRedirect(w http.ResponseWriter, r *http.Request) (bool, data.User) {
 	loggedIn, user := s.getLoggedInUser(r)
 	if !loggedIn {
-		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 	return loggedIn, user
 }
