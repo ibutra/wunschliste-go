@@ -30,5 +30,5 @@ func (s *Serve) registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 	}
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
