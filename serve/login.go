@@ -74,7 +74,7 @@ func login(user data.User, w http.ResponseWriter) error {
 		Expires:  session.ValidUntil,
 		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
-		Secure:   true,
+		// Secure:   true,
 	}
 	http.SetCookie(w, &cookie)
 	return nil
