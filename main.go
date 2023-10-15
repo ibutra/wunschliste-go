@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/ibutra/wunschliste-go/data"
@@ -20,11 +21,14 @@ func main() {
 	}
 	defer d.Close()
 
+	fmt.Println(d.String())
+
 	serve, err := serve.NewServe(&d)
 	if err != nil {
 		log.Panic("Failed to serve: ", err)
 	}
 
+	log.Println("Starting server")
 	err = serve.Serve()
 	if err != nil {
 		log.Panic("Failed to serve ", err)
