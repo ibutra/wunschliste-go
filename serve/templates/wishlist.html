@@ -23,7 +23,7 @@
     {{range .Wishs}}
     <tr>
       <td>{{.Name}}</td>
-      <td><a href={{.Link}}>{{.Link}}</a></td>
+      <td><a href={{.Link}}>Link</a></td>
       <td>{{printf "%.2f" .Price}}€</td>
       {{if $canEdit}}
         <td><a class="button is-warning" href="/wish/{{.Id}}/edit">Bearbeiten</a></td>
