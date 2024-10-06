@@ -11,6 +11,7 @@ type userlistTemplateData struct {
 	Message string
 	Users []data.User
 	LoggedInUser data.User
+  RegisterClosed bool
 }
 
 func (s *Serve) serveUserList(loggedInUser data.User, w http.ResponseWriter, r *http.Request) {
@@ -26,6 +27,11 @@ func (s *Serve) serveUserList(loggedInUser data.User, w http.ResponseWriter, r *
 	}
 	ti.Users = users
 	ti.LoggedInUser = loggedInUser
+  settings, err := s.data.GetSettings()
+  if err != nil {
+    log.Println(err)
+  }
+  ti.RegisterClosed = settings.RegisterClosed
 	s.renderNavbar(loggedInUser, w);
 	err = s.templates.ExecuteTemplate(w, "userlist", ti)
 	if err != nil {
@@ -67,4 +73,22 @@ func (s *Serve) deleteUserHandler(loggedInUser data.User, w http.ResponseWriter,
 		log.Println(err)
 		return
 	}
+}
+
+func (s *Serve) openRegistrationHandler(loggedInUser data.User, w http.ResponseWriter, r *http.Request) {
+  if !loggedInUser.Admin {
+    http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+  }
+	http.Redirect(w, r, "/admin", http.StatusTemporaryRedirect)
+  settings := data.Settings{RegisterClosed: false};
+  s.data.SetSettings(settings)
+}
+
+func (s *Serve) closeRegistrationHandler(loggedInUser data.User, w http.ResponseWriter, r *http.Request) {
+  if !loggedInUser.Admin {
+    http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+  }
+	http.Redirect(w, r, "/admin", http.StatusTemporaryRedirect)
+  settings := data.Settings{RegisterClosed: true};
+  s.data.SetSettings(settings)
 }

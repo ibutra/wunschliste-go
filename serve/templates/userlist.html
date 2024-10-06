@@ -2,6 +2,13 @@
 {{if not (eq .Message "")}}
   <div class="notification is-danger is-light">{{.Message}}</div>
 {{end}}
+<section class="section">
+  {{if .RegisterClosed}}
+    <a class="button" href="/admin/openregister">Open for registration</a>
+  {{else}}
+    <a class="button" href="/admin/closeregister">Close for registration</a>
+  {{end}}
+</section>
 {{$loggedInName := .LoggedInUser.Name}}
 <section class="section container">
   <table class="table is-striped is-fullwidth">

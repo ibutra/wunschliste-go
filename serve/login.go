@@ -55,10 +55,20 @@ func (s *Serve) loginHandlerPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderLoginTemplate(s *Serve, w http.ResponseWriter, message string) {
+  settings, err := s.data.GetSettings()
+  if err != nil {
+    log.Println(err)
+  }
 	if message != "" {
-		s.templates.ExecuteTemplate(w, "login", struct{ Message string }{Message: message})
+		err = s.templates.ExecuteTemplate(w, "login", struct{ Message string; RegisterClosed bool }{Message: message, RegisterClosed: settings.RegisterClosed})
+    if err != nil {
+      log.Println(err)
+    }
 	} else {
-		s.templates.ExecuteTemplate(w, "login", nil)
+		err = s.templates.ExecuteTemplate(w, "login", struct{ Message string; RegisterClosed bool }{Message: "", RegisterClosed: settings.RegisterClosed})
+    if err != nil {
+      log.Println(err)
+    }
 	}
 }
 

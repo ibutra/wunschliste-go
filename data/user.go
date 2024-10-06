@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"slices"
 
 	bolt "go.etcd.io/bbolt"
 	"golang.org/x/crypto/argon2"
-	"golang.org/x/exp/slices"
 )
 
 const (

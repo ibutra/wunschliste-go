@@ -72,6 +72,10 @@ func (s *Serve) ServeRoute(w http.ResponseWriter, r *http.Request) {
 		s.approveUserHandler(user, w, r, userName)
 	case match("/admin/user/:user/delete", METHOD_ALL, r, &userName):
 		s.deleteUserHandler(user, w, r, userName)
+  case match("/admin/openregister", METHOD_ALL, r):
+    s.openRegistrationHandler(user, w, r)
+  case match("/admin/closeregister", METHOD_ALL, r):
+    s.closeRegistrationHandler(user, w, r)
 	default:
 		s.notFoundHandler(user, w, r)
 	}

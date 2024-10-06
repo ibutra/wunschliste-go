@@ -6,13 +6,29 @@ import (
 )
 
 func (s *Serve) registerHandlerGet(w http.ResponseWriter, r *http.Request) {
-	err := s.templates.ExecuteTemplate(w, "register", nil)
+  settings, err := s.data.GetSettings()
+  if err != nil {
+    log.Println(err)
+  }
+  if settings.RegisterClosed {
+    http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+    return
+  }
+	err = s.templates.ExecuteTemplate(w, "register", nil)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
 func (s *Serve) registerHandlerPost(w http.ResponseWriter, r *http.Request) {
+  settings, err := s.data.GetSettings()
+  if err != nil {
+    log.Println(err)
+  }
+  if settings.RegisterClosed {
+    http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+    return
+  }
 	name := r.PostFormValue("username")
 	password := r.PostFormValue("password")
 	user, err := s.data.CreateUser(name, password)
