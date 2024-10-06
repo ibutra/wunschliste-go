@@ -6,7 +6,7 @@ FROM golang:latest AS builder
 # Add github to known hosts
 RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 # Clone repo
-RUN git clone git@github.com:ibutra/wunschliste-go.git /wunschliste-build
+RUN git clone https://github.com/ibutra/wunschliste-go.git
 # build
 WORKDIR /wunschliste-build
 RUN ls -la && pwd
